@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>LT.DigitalOffice.AuthenticationService</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.AuthenticationService</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.0.1" />
+    <PackageReference Include="GreenPipes" Version="4.0.0" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
+    <PackageReference Include="MassTransit" Version="7.0.4" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.0.3" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.4" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuthentificationService.Broker\AuthentificationService.Broker.csproj" />
+    <ProjectReference Include="..\AuthentificationService.Business\AuthentificationService.Business.csproj" />
+    <ProjectReference Include="..\AuthentificationService.Data.Provider\AuthentificationService.Models.Dto.csproj" />
+    <ProjectReference Include="..\AuthentificationService.Token\AuthentificationService.Token.csproj" />
+    <ProjectReference Include="..\AuthentificationService.Validation\AuthentificationService.Validation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <UserSecretsId>4dfac504-9e3d-4eb3-bdd9-642ce453e67d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+</Project>
