@@ -2,8 +2,8 @@
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
 using LT.DigitalOffice.AuthenticationService.Models.Dto;
-using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
+using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;

@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AuthenticationService.Broker\AuthenticationService.Broker.csproj" />
     <ProjectReference Include="..\AuthenticationService.Business\AuthenticationService.Business.csproj" />
     <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
     <ProjectReference Include="..\AuthenticationService.Token\AuthenticationService.Token.csproj" />
