@@ -5,6 +5,7 @@ using LT.DigitalOffice.AuthenticationService.Business;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
 using LT.DigitalOffice.AuthenticationService.Token;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
+using LT.DigitalOffice.AuthentificationService.Broker.Requests;
 using LT.DigitalOffice.AuthentificationService.Models.Dto;
 using LT.DigitalOffice.AuthentificationService.Validation;
 using LT.DigitalOffice.Broker.Requests;
@@ -86,7 +87,8 @@ namespace LT.DigitalOffice.AuthenticationService
             string serviceName = Configuration.GetSection(appSettingSection)["Username"];
             string servicePassword = Configuration.GetSection(appSettingSection)["Password"];
 
-            var uri = $"rabbitmq://localhost/UserService_{serviceName}";
+            var userServiceUrl = $"rabbitmq://localhost/UserService_{serviceName}";
+            var messageServiceUrl = $"rabbitmq://localhost/MessageService_{serviceName}"
 
             services.AddMassTransit(x =>
             {
@@ -109,7 +111,9 @@ namespace LT.DigitalOffice.AuthenticationService
                     });
                 });
 
-                x.AddRequestClient<IUserCredentialsRequest>(new Uri(uri));
+                x.AddRequestClient<IUserCredentialsRequest>(new Uri(userServiceUrl));
+                x.AddRequestClient<IUserEmailRequest>(new Uri(userServiceUrl));
+                x.AddRequestClient<IUserDescriptionRequest>(new Uri(messageServiceUrl));
             });
         }
 
