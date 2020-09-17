@@ -16,5 +16,11 @@ namespace LT.DigitalOffice.AuthenticationService.Controllers
         {
             return await command.Execute(userCredentials);
         }
+
+        [HttpPost("forgotPassword")]
+        public void ForgotPassword([FromServices] IFogotPasswordCommand command, string userEmail)
+        {
+            return command.Execute();
+        }
     }
 }
