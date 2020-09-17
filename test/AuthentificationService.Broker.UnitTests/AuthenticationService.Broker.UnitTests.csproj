@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AuthentificationService.Broker\AuthenticationService.Broker.csproj" />
-    <ProjectReference Include="..\..\src\AuthentificationService.Token\AuthenticationService.Token.csproj" />
+    <ProjectReference Include="..\..\src\AuthenticationService.Broker\AuthenticationService.Broker.csproj" />
+    <ProjectReference Include="..\..\src\AuthenticationService.Token\AuthenticationService.Token.csproj" />
   </ItemGroup>
 
 </Project>

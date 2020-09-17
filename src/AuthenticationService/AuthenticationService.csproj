@@ -18,6 +18,14 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AuthenticationService.Broker\AuthenticationService.Broker.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Business\AuthenticationService.Business.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Token\AuthenticationService.Token.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Validation\AuthenticationService.Validation.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <LangVersion>preview</LangVersion>
     <UserSecretsId>4dfac504-9e3d-4eb3-bdd9-642ce453e67d</UserSecretsId>
