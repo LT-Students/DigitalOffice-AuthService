@@ -5,21 +5,20 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>LT.DigitalOffice.AuthentificationService.Token.UnitTests</AssemblyName>
+    <AssemblyName>LT.DigitalOffice.AuthenticationService.Validation.UnitTests</AssemblyName>
 
-    <RootNamespace>LT.DigitalOffice.AuthentificationService.Token.UnitTests</RootNamespace>
+    <RootNamespace>LT.DigitalOffice.AuthenticationService.Validation.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
-    <PackageReference Include="Moq" Version="4.14.5" />
+    <PackageReference Include="FluentValidation" Version="9.0.1" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AuthentificationService.Token\AuthentificationService.Token.csproj" />
+    <ProjectReference Include="..\..\src\AuthenticationService.Data.Provider\AuthenticationService.Models.Dto.csproj" />
   </ItemGroup>
 
 </Project>

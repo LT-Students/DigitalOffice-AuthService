@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>LT.DigitalOffice.AuthentificationService.Broker</AssemblyName>
-    <RootNamespace>LT.DigitalOffice.AuthentificationService.Broker</RootNamespace>
+    <AssemblyName>LT.DigitalOffice.AuthenticationService.Broker</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.AuthenticationService.Broker</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AuthentificationService.Token\AuthentificationService.Token.csproj" />
+    <ProjectReference Include="..\AuthentificationService.Token\AuthenticationService.Token.csproj" />
   </ItemGroup>
 
 </Project>

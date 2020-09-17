@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>LT.DigitalOffice.AuthenticationService.Token</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.AuthenticationService.Token</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

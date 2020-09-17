@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using LT.DigitalOffice.AuthentificationService.Models.Dto;
+using LT.DigitalOffice.AuthenticationService.Models.Dto;
 
 namespace LT.DigitalOffice.AuthenticationService.Business.Interfaces
 {

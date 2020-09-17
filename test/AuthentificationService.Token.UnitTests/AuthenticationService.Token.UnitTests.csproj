@@ -5,13 +5,13 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>LT.DigitalOffice.AuthentificationService.Broker.UnitTests</AssemblyName>
+    <AssemblyName>LT.DigitalOffice.AuthenticationService.Token.UnitTests</AssemblyName>
 
-    <RootNamespace>LT.DigitalOffice.AuthentificationService.Broker.UnitTests</RootNamespace>
+    <RootNamespace>LT.DigitalOffice.AuthenticationService.Token.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="7.0.4" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
     <PackageReference Include="Moq" Version="4.14.5" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AuthentificationService.Broker\AuthentificationService.Broker.csproj" />
-    <ProjectReference Include="..\..\src\AuthentificationService.Token\AuthentificationService.Token.csproj" />
+    <ProjectReference Include="..\..\src\AuthentificationService.Token\AuthenticationService.Token.csproj" />
   </ItemGroup>
 
 </Project>

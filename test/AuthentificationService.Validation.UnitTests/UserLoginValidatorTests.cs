@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
-using LT.DigitalOffice.AuthentificationService.Models.Dto;
-using LT.DigitalOffice.AuthentificationService.Validation;
+using LT.DigitalOffice.AuthenticationService.Models.Dto;
 using NUnit.Framework;
 
 namespace LT.DigitalOffice.AuthenticationService.Validation.UnitTests

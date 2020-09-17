@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.AuthentificationService.Models.Dto
+namespace LT.DigitalOffice.AuthenticationService.Models.Dto
 {
     public class UserLoginResult
     {

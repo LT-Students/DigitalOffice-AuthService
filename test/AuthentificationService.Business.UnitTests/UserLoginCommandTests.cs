@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Moq;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
 using FluentValidation;
-using LT.DigitalOffice.AuthentificationService.Models.Dto;
+using LT.DigitalOffice.AuthenticationService.Models.Dto;
 
 namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
 {

@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.AuthenticationService.Token;
-using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
+﻿using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 using System.Text;
