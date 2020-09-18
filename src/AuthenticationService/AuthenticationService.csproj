@@ -19,11 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AuthentificationService.Broker\AuthentificationService.Broker.csproj" />
-    <ProjectReference Include="..\AuthentificationService.Business\AuthentificationService.Business.csproj" />
-    <ProjectReference Include="..\AuthentificationService.Data.Provider\AuthentificationService.Models.Dto.csproj" />
-    <ProjectReference Include="..\AuthentificationService.Token\AuthentificationService.Token.csproj" />
-    <ProjectReference Include="..\AuthentificationService.Validation\AuthentificationService.Validation.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Business\AuthenticationService.Business.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Token\AuthenticationService.Token.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Validation\AuthenticationService.Validation.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
