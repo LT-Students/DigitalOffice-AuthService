@@ -5,8 +5,8 @@ using LT.DigitalOffice.AuthenticationService.Business;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
 using LT.DigitalOffice.AuthenticationService.Token;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
-using LT.DigitalOffice.AuthentificationService.Models.Dto;
-using LT.DigitalOffice.AuthentificationService.Validation;
+using LT.DigitalOffice.AuthenticationService.Models.Dto;
+using LT.DigitalOffice.AuthenticationService.Validation;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
@@ -125,6 +125,8 @@ namespace LT.DigitalOffice.AuthenticationService
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseHealthChecks("/healthcheck");
+
             app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
 
             app.UseHttpsRedirection();

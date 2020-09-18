@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
-using LT.DigitalOffice.AuthentificationService.Models.Dto;
+using LT.DigitalOffice.AuthenticationService.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
