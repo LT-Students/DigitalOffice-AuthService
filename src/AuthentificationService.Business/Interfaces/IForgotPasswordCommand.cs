@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LT.DigitalOffice.AuthentificationService.Business.Interfaces
+﻿namespace LT.DigitalOffice.AuthentificationService.Business.Interfaces
 {
     /// <summary>
     /// Represents interface for a command in command pattern.
@@ -10,10 +6,9 @@ namespace LT.DigitalOffice.AuthentificationService.Business.Interfaces
     public interface IForgotPasswordCommand
     {
         /// <summary>
-        ///Method for getting user id and jwt by email and password
+        /// Method for getting user description by email and sent request in Message Service
         /// </summary>
-        /// <param name="request">Request model with user email and password.</param>
-        /// <returns>Response model with user id and jwt</returns>
+        /// <param name="userEmail">Specific user email</param>
         void Execute(string userEmail);
     }
 }

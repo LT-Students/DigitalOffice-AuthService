@@ -9,7 +9,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.Interfaces
     public interface IUserLoginCommand
     {
         /// <summary>
-        ///Method for getting user id and jwt by email and password
+        /// Method for getting user id and jwt by email and password
         /// </summary>
         /// <param name="request">Request model with user email and password.</param>
         /// <returns>Response model with user id and jwt</returns>
