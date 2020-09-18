@@ -88,7 +88,7 @@ namespace LT.DigitalOffice.AuthenticationService
             string servicePassword = Configuration.GetSection(appSettingSection)["Password"];
 
             var userServiceUrl = $"rabbitmq://localhost/UserService_{serviceName}";
-            var messageServiceUrl = $"rabbitmq://localhost/MessageService_{serviceName}"
+            var messageServiceUrl = $"rabbitmq://localhost/MessageService_{serviceName}";
 
             services.AddMassTransit(x =>
             {

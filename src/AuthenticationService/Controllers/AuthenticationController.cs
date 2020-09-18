@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
+using LT.DigitalOffice.AuthentificationService.Business.Interfaces;
 using LT.DigitalOffice.AuthentificationService.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -18,9 +19,9 @@ namespace LT.DigitalOffice.AuthenticationService.Controllers
         }
 
         [HttpPost("forgotPassword")]
-        public void ForgotPassword([FromServices] IFogotPasswordCommand command, string userEmail)
+        public void ForgotPassword([FromServices] IForgotPasswordCommand command, string userEmail)
         {
-            return command.Execute();
+            command.Execute(userEmail);
         }
     }
 }
