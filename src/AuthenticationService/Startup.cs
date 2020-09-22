@@ -125,7 +125,7 @@ namespace LT.DigitalOffice.AuthenticationService
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseHealthChecks("/healthcheck");
+            app.UseHealthChecks("/api/healthcheck");
 
             app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
 
@@ -144,7 +144,6 @@ namespace LT.DigitalOffice.AuthenticationService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("api/healthcheck");
             });
         }
     }
