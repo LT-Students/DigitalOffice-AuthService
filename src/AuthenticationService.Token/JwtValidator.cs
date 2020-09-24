@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
+using LT.DigitalOffice.Kernel.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -6,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace LT.DigitalOffice.AuthenticationService.Token
 {
+    /// <inheritdoc cref="IJwtValidator"/>
     public class JwtValidator : IJwtValidator
     {
         private readonly TokenValidationParameters validationParameters;
@@ -24,11 +26,11 @@ namespace LT.DigitalOffice.AuthenticationService.Token
             }
             catch(SecurityTokenValidationException exception)
             {
-                throw new Exception($"Token failed validation: {exception.Message}");
+                throw new BadRequestException($"Token failed validation: {exception.Message}");
             }
             catch(ArgumentException exception)
             {
-                throw new Exception($"Token was wrong format: {exception.Message}");
+                throw new BadRequestException($"Token was wrong format: {exception.Message}");
             }
         }
     }

@@ -14,6 +14,8 @@ using Moq;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
 using FluentValidation;
 using LT.DigitalOffice.AuthenticationService.Models.Dto;
+using LT.DigitalOffice.Kernel.Exceptions;
+using FluentValidation.Results;
 
 namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
 {
@@ -127,7 +129,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
         {
             newUserCredentials.Password = "Example";
 
-            Assert.ThrowsAsync<Exception>(() => command.Execute(newUserCredentials));
+            Assert.ThrowsAsync<ForbiddenException>(() => command.Execute(newUserCredentials));
         }
 
         [Test]
@@ -147,10 +149,14 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
             newUserCredentials.Email = "";
 
             validatorMock
-                .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
-                .Returns(false);
+                .Setup(x => x.Validate(It.IsAny<UserLoginInfoRequest>()))
+                .Returns(new ValidationResult(
+                    new List<ValidationFailure>
+                    {
+                        new ValidationFailure("test", "something", null)
+                    }));
 
-            Assert.ThrowsAsync<ValidationException>(() => command.Execute(newUserCredentials));
+            Assert.ThrowsAsync<BadRequestException>(() => command.Execute(newUserCredentials));
         }
         #endregion
     }

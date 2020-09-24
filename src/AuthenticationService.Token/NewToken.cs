@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace LT.DigitalOffice.AuthenticationService.Token
 {
+    /// <inheritdoc cref="INewToken"/>
     public class NewToken : INewToken
     {
         private readonly IJwtSigningEncodingKey signingEncodingKey;

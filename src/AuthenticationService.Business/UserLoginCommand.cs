@@ -11,9 +11,12 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
+using LT.DigitalOffice.Kernel.Exceptions;
 
 namespace LT.DigitalOffice.AuthenticationService.Business
 {
+    /// <inheritdoc cref="IUserLoginCommand"/>
     public class UserLoginCommand : IUserLoginCommand
     {
         private readonly INewToken token;
@@ -32,7 +35,15 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
         public async Task<UserLoginResult> Execute(UserLoginInfoRequest loginInfo)
         {
-            validator.ValidateAndThrow(loginInfo);
+            var validationResult = validator.Validate(loginInfo);
+
+            if (validationResult != null && !validationResult.IsValid)
+            {
+                var messages = validationResult.Errors.Select(x => x.ErrorMessage);
+                string message = messages.Aggregate((x, y) => x + "\n" + y);
+
+                throw new BadRequestException(message);
+            }
 
             var userCredentials = await GetUserCredentials(loginInfo.Email);
 
@@ -56,7 +67,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
             if (!brokerResponse.Message.IsSuccess)
             {
-                throw new Exception(String.Join(", ", brokerResponse.Message.Errors));
+                throw new ForbiddenException(String.Join(", ", brokerResponse.Message.Errors));
             }
 
             return brokerResponse.Message.Body;
@@ -71,7 +82,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
             if (passwordHash != userPasswordHash)
             {
-                throw new Exception("Wrong password.");
+                throw new ForbiddenException("Wrong password.");
             }
         }
     }

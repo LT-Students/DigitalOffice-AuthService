@@ -1,7 +1,7 @@
 ﻿namespace LT.DigitalOffice.AuthenticationService.Token.Interfaces
 {
     /// <summary>
-    /// Represents interface for validation user token.
+    /// Provides a method for validation user token.
     /// </summary>
     public interface IJwtValidator
     {

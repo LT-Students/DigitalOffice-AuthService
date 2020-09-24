@@ -3,7 +3,7 @@
 namespace LT.DigitalOffice.AuthenticationService.Token.Interfaces
 {
     /// <summary>
-    /// Represents interface for create encoding key jwt.
+    /// Provides a method for create encoding key jwt.
     /// </summary>
     public interface IJwtSigningEncodingKey
     {
@@ -11,9 +11,9 @@ namespace LT.DigitalOffice.AuthenticationService.Token.Interfaces
         string SigningAlgorithm { get; }
 
         /// <summary>
-        /// Method for getting encoding key jwt.
+        /// Gets the encoding key jwt.
         /// </summary>
-        /// <returns>Return key to create the signature(private key).</returns>
+        /// <returns>Key to create the signature(private key).</returns>
         SecurityKey GetKey();
     }
 }

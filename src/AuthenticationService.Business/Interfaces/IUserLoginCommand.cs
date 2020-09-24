@@ -4,15 +4,17 @@ using LT.DigitalOffice.AuthenticationService.Models.Dto;
 namespace LT.DigitalOffice.AuthenticationService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Implementation of the command pattern. Provides a method to log in a user.
     /// </summary>
     public interface IUserLoginCommand
     {
         /// <summary>
-        ///Method for getting user id and jwt by email and password
+        /// According to the user's data, returns his ID and token.
         /// </summary>
         /// <param name="request">Request model with user email and password.</param>
-        /// <returns>Response model with user id and jwt</returns>
+        /// <returns>Response model with user id and jwt.</returns>
+        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when user data is incorrect.</exception>
+        /// <exception cref="Kernel.Exceptions.ForbiddenException">Thrown when incorrect login or password.</exception>
         Task<UserLoginResult> Execute(UserLoginInfoRequest request);
     }
 }
