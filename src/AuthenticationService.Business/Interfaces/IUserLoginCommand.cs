@@ -4,7 +4,8 @@ using LT.DigitalOffice.AuthenticationService.Models.Dto;
 namespace LT.DigitalOffice.AuthenticationService.Business.Interfaces
 {
     /// <summary>
-    /// Implementation of the command pattern. Provides a method to log in a user.
+    /// Represents the command pattern.
+    /// Provides a method to log in a user.
     /// </summary>
     public interface IUserLoginCommand
     {

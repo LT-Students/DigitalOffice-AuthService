@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Token;
+using LT.DigitalOffice.Kernel.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 using System;
@@ -52,8 +53,8 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
                 "see https://aka.ms/IdentityModel/PII.]' or validationParameters.ValidAudiences: " +
                 "'[PII is hidden. For more details, see https://aka.ms/IdentityModel/PII.]'.";
 
-            Assert.Throws<Exception>(() => jwtValidation.ValidateJwt(userJwt),
-                $"Token failed validation: { expectedExeption}");
+            Assert.Throws<BadRequestException>(() => jwtValidation.ValidateJwt(userJwt),
+                $"Token failed validation: { expectedExeption }");
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
                 "see https://aka.ms/IdentityModel/PII.]' must have three segments (JWS) or five segments (JWE).";
 
 
-            Assert.Throws<Exception>(() => jwtValidation.ValidateJwt(userJwt),
+            Assert.Throws<BadRequestException>(() => jwtValidation.ValidateJwt(userJwt),
                 $"Token was wrong format: { expectedExeption}");
         }
 
