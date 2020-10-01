@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Token
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Validation.UnitTests", "test\AuthenticationService.Validation.UnitTests\AuthenticationService.Validation.UnitTests.csproj", "{F1C7FBFB-8833-4455-B6B3-4220A3E854A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationService.Models.BrokerRequest", "src\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.BrokerRequest.csproj", "{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{F1C7FBFB-8833-4455-B6B3-4220A3E854A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1C7FBFB-8833-4455-B6B3-4220A3E854A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C7FBFB-8833-4455-B6B3-4220A3E854A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{0DF507C5-D37F-4CD2-890E-9823A9B4A8A6} = {6BD208AF-EE2B-4C77-8C5E-810BA38194BE}
 		{CD20F463-CA2B-4139-B165-1AFC7C8BB645} = {6BD208AF-EE2B-4C77-8C5E-810BA38194BE}
 		{F1C7FBFB-8833-4455-B6B3-4220A3E854A9} = {6BD208AF-EE2B-4C77-8C5E-810BA38194BE}
+		{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B} = {0225A4B4-7848-4A71-89F9-AE384C0B7191}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {05E98720-992F-4CC5-8E80-6087B96746FD}

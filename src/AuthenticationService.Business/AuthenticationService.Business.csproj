@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthenticationService.Broker\AuthenticationService.Broker.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.BrokerRequest.csproj" />
     <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
     <ProjectReference Include="..\AuthenticationService.Token\AuthenticationService.Token.csproj" />
   </ItemGroup>
