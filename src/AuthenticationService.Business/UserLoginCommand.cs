@@ -39,10 +39,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
             if (validationResult != null && !validationResult.IsValid)
             {
-                var messages = validationResult.Errors.Select(x => x.ErrorMessage);
-                string message = messages.Aggregate((x, y) => x + "\n" + y);
-
-                throw new BadRequestException(message);
+                throw new BadRequestException(validationResult.Errors.Select(x => x.ErrorMessage));
             }
 
             var userCredentials = await GetUserCredentials(loginInfo.Email);
