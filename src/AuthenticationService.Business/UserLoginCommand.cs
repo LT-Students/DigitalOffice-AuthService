@@ -64,7 +64,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
             if (!brokerResponse.Message.IsSuccess)
             {
-                throw new ForbiddenException(String.Join(", ", brokerResponse.Message.Errors));
+                throw new ForbiddenException(brokerResponse.Message.Errors);
             }
 
             return brokerResponse.Message.Body;
