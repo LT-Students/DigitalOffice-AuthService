@@ -149,7 +149,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
             newUserCredentials.Email = "";
 
             validatorMock
-                .Setup(x => x.Validate(It.IsAny<UserLoginInfoRequest>()))
+                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult(
                     new List<ValidationFailure>
                     {
