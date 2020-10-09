@@ -35,12 +35,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
         public async Task<UserLoginResult> Execute(UserLoginInfoRequest loginInfo)
         {
-            var validationResult = validator.Validate(loginInfo);
-
-            if (validationResult != null && !validationResult.IsValid)
-            {
-                throw new BadRequestException(validationResult.Errors.Select(x => x.ErrorMessage));
-            }
+            validator.ValidateAndThrowCustom(loginInfo);
 
             var userCredentials = await GetUserCredentials(loginInfo.Email);
 
