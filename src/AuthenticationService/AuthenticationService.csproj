@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="9.2.2" />
     <PackageReference Include="GreenPipes" Version="4.0.0" />
-    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.8" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.9" />
     <PackageReference Include="MassTransit" Version="7.0.4" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.0.4" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.4" />
