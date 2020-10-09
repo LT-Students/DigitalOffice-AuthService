@@ -156,7 +156,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
                         new ValidationFailure("test", "something", null)
                     }));
 
-            Assert.ThrowsAsync<BadRequestException>(() => command.Execute(newUserCredentials));
+            Assert.ThrowsAsync<ValidationException>(() => command.Execute(newUserCredentials));
         }
         #endregion
     }

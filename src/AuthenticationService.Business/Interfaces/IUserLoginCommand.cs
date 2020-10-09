@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.Interfaces
         /// </summary>
         /// <param name="request">Request model with user email and password.</param>
         /// <returns>Response model with user id and jwt.</returns>
-        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when user data is incorrect.</exception>
+        /// <exception cref="ValidationException">Thrown when user data is incorrect.</exception>
         /// <exception cref="Kernel.Exceptions.ForbiddenException">Thrown when incorrect login or password.</exception>
         Task<UserLoginResult> Execute(UserLoginInfoRequest request);
     }
