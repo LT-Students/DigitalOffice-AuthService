@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 
 namespace LT.DigitalOffice.AuthenticationService.Business
 {
