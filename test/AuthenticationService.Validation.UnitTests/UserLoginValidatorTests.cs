@@ -1,45 +1,42 @@
-﻿using FluentValidation;
-using FluentValidation.TestHelper;
-using LT.DigitalOffice.AuthenticationService.Models.Dto;
+﻿using FluentValidation.TestHelper;
+using LT.DigitalOffice.AuthenticationService.Models.Dto.Requests;
+using LT.DigitalOffice.AuthenticationService.Validation.Interfaces;
 using NUnit.Framework;
 
 namespace LT.DigitalOffice.AuthenticationService.Validation.UnitTests
 {
-    class UserLoginValidatorTests
+    public class LoginValidatorTests
     {
-        private IValidator<UserLoginInfoRequest> validator;
+        private ILoginValidator validator;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
-            validator = new UserLoginValidator();
+            validator = new LoginValidator();
         }
 
         [Test]
-        public void EmptyLoginEmptyPassword()
+        public void GoodLoginRequestTest()
         {
-            validator.ShouldHaveValidationErrorFor(x => x.Email, "");
-            validator.ShouldHaveValidationErrorFor(x => x.Password, "");
+            var request = new LoginRequest
+            {
+                LoginData = "admin",
+                Password = "admin"
+            };
+
+            var result = validator.TestValidate(request);
+
+            result.ShouldNotHaveAnyValidationErrors();
         }
 
         [Test]
-        public void EmptyLogin()
+        public void BadLoginRequestTest()
         {
-            validator.ShouldHaveValidationErrorFor(x => x.Email, "");
-            validator.ShouldNotHaveValidationErrorFor(x => x.Password, "Example");
-        }
+            var request = new LoginRequest();
 
-        [Test]
-        public void EmptyPassword()
-        {
-            validator.ShouldNotHaveValidationErrorFor(x => x.Email, "Example@mail.com");
-            validator.ShouldHaveValidationErrorFor(x => x.Password, "");
-        }
-
-        [Test]
-        public void EmailIsValid()
-        {
-            validator.ShouldNotHaveValidationErrorFor(x => x.Email, "Example");
+            var result = validator.TestValidate(request);
+            result.ShouldHaveValidationErrorFor(x => x.LoginData);
+            result.ShouldHaveValidationErrorFor(x => x.Password);
         }
     }
 }

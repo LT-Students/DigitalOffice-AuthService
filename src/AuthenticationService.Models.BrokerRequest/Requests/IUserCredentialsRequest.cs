@@ -5,6 +5,14 @@
     /// </summary>
     public interface IUserCredentialsRequest
     {
-        string Email { get; }
+        string LoginData { get; }
+
+        static object CreateObj(string loginData)
+        {
+            return new
+            {
+                LoginData = loginData
+            };
+        }
     }
 }

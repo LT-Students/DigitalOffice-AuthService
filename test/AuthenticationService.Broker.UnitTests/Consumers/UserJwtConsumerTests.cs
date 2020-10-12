@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LT.DigitalOffice.AuthenticationService.Broker.Consumer.UnitTests
+namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
 {
     class UserJwtConsumerTests
     {
@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.Consumer.UnitTests
 
         private InMemoryTestHarness harness;
         private string userJwt;
-        private ConsumerTestHarness<UserJwtConsumer> consumerTestHarness;
+        private ConsumerTestHarness<JwtConsumer> consumerTestHarness;
 
         #region Setup
         [SetUp]
@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.Consumer.UnitTests
             harness = new InMemoryTestHarness();
             jwtValidationMock = new Mock<IJwtValidator>();
 
-            consumerTestHarness = harness.Consumer(() => new UserJwtConsumer(jwtValidationMock.Object));
+            consumerTestHarness = harness.Consumer(() => new JwtConsumer(jwtValidationMock.Object));
         }
         #endregion
 
@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.Consumer.UnitTests
             bool expectedBody = false;
 
             jwtValidationMock
-                .Setup(x => x.ValidateJwt(It.IsAny<string>()))
+                .Setup(x => x.ValidateAndThrow(It.IsAny<string>()))
                 .Throws(new Exception("Token failed validation"));
 
             await harness.Start();

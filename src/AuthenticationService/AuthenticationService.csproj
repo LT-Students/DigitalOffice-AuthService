@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="9.0.1" />
+    <PackageReference Include="FluentValidation" Version="9.2.2" />
     <PackageReference Include="GreenPipes" Version="4.0.0" />
-    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.9" />
     <PackageReference Include="MassTransit" Version="7.0.4" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.0.3" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.4" />
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthenticationService.Business\AuthenticationService.Business.csproj" />
-    <ProjectReference Include="..\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.BrokerRequest.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.Broker.csproj" />
     <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
     <ProjectReference Include="..\AuthenticationService.Token\AuthenticationService.Token.csproj" />
     <ProjectReference Include="..\AuthenticationService.Validation\AuthenticationService.Validation.csproj" />
