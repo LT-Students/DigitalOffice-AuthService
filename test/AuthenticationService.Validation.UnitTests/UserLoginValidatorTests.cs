@@ -18,28 +18,28 @@ namespace LT.DigitalOffice.AuthenticationService.Validation.UnitTests
         [Test]
         public void EmptyLoginEmptyPassword()
         {
-            validator.ShouldHaveValidationErrorFor(x => x.Email, "");
+            validator.ShouldHaveValidationErrorFor(x => x.Login, "");
             validator.ShouldHaveValidationErrorFor(x => x.Password, "");
         }
 
         [Test]
         public void EmptyLogin()
         {
-            validator.ShouldHaveValidationErrorFor(x => x.Email, "");
+            validator.ShouldHaveValidationErrorFor(x => x.Login, "");
             validator.ShouldNotHaveValidationErrorFor(x => x.Password, "Example");
         }
 
         [Test]
         public void EmptyPassword()
         {
-            validator.ShouldNotHaveValidationErrorFor(x => x.Email, "Example@mail.com");
+            validator.ShouldNotHaveValidationErrorFor(x => x.Login, "Example@mail.com");
             validator.ShouldHaveValidationErrorFor(x => x.Password, "");
         }
 
         [Test]
         public void EmailIsValid()
         {
-            validator.ShouldNotHaveValidationErrorFor(x => x.Email, "Example");
+            validator.ShouldNotHaveValidationErrorFor(x => x.Login, "Example");
         }
     }
 }
