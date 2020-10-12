@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.AuthenticationService.Validation
     {
         public UserLoginValidator()
         {
-            RuleFor(user => user.Email)
+            RuleFor(user => user.Login)
                 .NotEmpty();
 
             RuleFor(user => user.Password)

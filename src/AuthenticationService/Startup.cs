@@ -3,9 +3,9 @@ using GreenPipes;
 using LT.DigitalOffice.AuthenticationService.Broker.Consumers;
 using LT.DigitalOffice.AuthenticationService.Business;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
+using LT.DigitalOffice.AuthenticationService.Models.Dto;
 using LT.DigitalOffice.AuthenticationService.Token;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
-using LT.DigitalOffice.AuthenticationService.Models.Dto;
 using LT.DigitalOffice.AuthenticationService.Validation;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel;
@@ -123,7 +123,7 @@ namespace LT.DigitalOffice.AuthenticationService
             services.AddTransient<IValidator<UserLoginInfoRequest>, UserLoginValidator>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseHealthChecks("/api/healthcheck");
 

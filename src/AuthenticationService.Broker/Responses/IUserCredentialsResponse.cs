@@ -9,5 +9,6 @@ namespace LT.DigitalOffice.Broker.Responses
     {
         Guid UserId { get; }
         string PasswordHash { get; }
+        string Salt { get; }
     }
 }
