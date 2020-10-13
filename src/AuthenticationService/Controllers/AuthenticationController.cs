@@ -1,9 +1,8 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
-using LT.DigitalOffice.AuthenticationService.Models.Dto;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using LT.DigitalOffice.AuthenticationService.Models.Dto.Requests;
 using LT.DigitalOffice.AuthenticationService.Models.Dto.Responses;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthenticationService.Controllers
 {

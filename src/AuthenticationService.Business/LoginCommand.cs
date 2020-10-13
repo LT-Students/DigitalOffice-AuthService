@@ -10,14 +10,13 @@ using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthenticationService.Business
 {
     public class LoginCommand : ILoginCommand
     {
+        private string loginData;
         private readonly ITokenEngine tokenEngine;
         private readonly ILoginValidator validator;
         private readonly IRequestClient<IUserCredentialsRequest> requestClient;
@@ -36,20 +35,22 @@ namespace LT.DigitalOffice.AuthenticationService.Business
         {
             validator.ValidateAndThrowCustom(request);
 
-            var userCredentials = await GetUserCredentials(request.LoginData);
+            this.loginData = request.LoginData;
 
-            VerifyPasswordHash(request.Password, userCredentials.PasswordHash);
+            var savedUserCredentials = await GetUserCredentials();
+
+            VerifyPasswordHash(savedUserCredentials, request.Password);
 
             var result = new LoginResult
             {
-                UserId = userCredentials.UserId,
+                UserId = savedUserCredentials.UserId,
                 Token = tokenEngine.Create(request.LoginData)
             };
 
             return result;
         }
 
-        private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
+        private async Task<IUserCredentialsResponse> GetUserCredentials()
         {
             var brokerResponse = await requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
                 IUserCredentialsRequest.CreateObj(loginData));
@@ -62,15 +63,16 @@ namespace LT.DigitalOffice.AuthenticationService.Business
             return brokerResponse.Message.Body;
         }
 
-        private void VerifyPasswordHash(string requestPassword, string savedPasswordHash)
+        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword)
         {
-            var shaM = new SHA512Managed();
+            string requestPasswordHash = UserPassword.GetPasswordHash(
+                loginData,
+                savedUserCredentials.Salt,
+                requestPassword);
 
-            var requestPasswordHash = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.UTF8.GetBytes(requestPassword)));
-
-            if (!string.Equals(savedPasswordHash, requestPasswordHash))
+            if (savedUserCredentials.PasswordHash != requestPasswordHash)
             {
-                throw new ForbiddenException();
+                throw new ForbiddenException("Wrong user password.");
             }
         }
     }
