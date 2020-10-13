@@ -7,12 +7,12 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 {
     internal static class UserPassword
     {
-        private static string internalSalt = "LT.DigitalOffice.SALT3";
+        private const string INTERNAL_SALT = "LT.DigitalOffice.SALT3";
 
         internal static string GetPasswordHash(string userLogin, string salt, string userPassword)
         {
             return Encoding.UTF8.GetString(new SHA512Managed().ComputeHash(
-                    Encoding.UTF8.GetBytes($"{salt}{userLogin}{userPassword}{internalSalt}")));
+                    Encoding.UTF8.GetBytes($"{salt}{userLogin}{userPassword}{INTERNAL_SALT}")));
         }
     }
 }
