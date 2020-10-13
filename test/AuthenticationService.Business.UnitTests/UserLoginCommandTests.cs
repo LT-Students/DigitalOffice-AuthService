@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
-using LT.DigitalOffice.AuthenticationService.Models.Dto;
+using LT.DigitalOffice.AuthenticationService.Models.Dto.Requests;
+using LT.DigitalOffice.AuthenticationService.Models.Dto.Responses;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
+using LT.DigitalOffice.AuthenticationService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
@@ -13,8 +15,6 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
@@ -42,13 +42,15 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
         #region Variables declaration
         private Mock<ITokenEngine> tokenEngineMock;
         private Mock<ILoginValidator> loginValidatorMock;
+        private Mock<ValidationResult> validationResultIsValidMock;
         private Mock<IRequestClient<IUserCredentialsRequest>> requestBrokerMock;
 
+        private string salt;
         private ILoginCommand command;
-        private string internalSalt = "LT.DigitalOffice.SALT3";
 
-        private UserCredentialsResponse brokerResponse;
         private LoginRequest newUserCredentials;
+        private ValidationResult validationResultError;
+        private UserCredentialsResponse brokerResponse;
         private OperationResult<UserCredentialsResponse> operationResult;
         #endregion
 
@@ -56,6 +58,8 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            salt = "Example_Salt1";
+
             loginValidatorMock = new Mock<ILoginValidator>();
 
             newUserCredentials = new LoginRequest
@@ -64,22 +68,30 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
                 Password = "Example_1234"
             };
 
+            validationResultError = new ValidationResult(
+                new List<ValidationFailure>
+                {
+                    new ValidationFailure("error", "something", null)
+                });
+
+            validationResultIsValidMock = new Mock<ValidationResult>();
+
+            validationResultIsValidMock
+                .Setup(x => x.IsValid)
+                .Returns(true);
+
             BrokerSetUp();
 
             tokenEngineMock = new Mock<ITokenEngine>();
             command = new LoginCommand(tokenEngineMock.Object, loginValidatorMock.Object, requestBrokerMock.Object);
-
-            loginValidatorMock
-               .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
-               .Returns(true);
         }
 
         public void BrokerSetUp()
         {
-            string salt = "Example_Salt1";
-
-            var passwordHash = Encoding.UTF8.GetString(new SHA512Managed().ComputeHash(
-                Encoding.UTF8.GetBytes($"{salt}{ newUserCredentials.Login}{newUserCredentials.Password}{internalSalt}")));
+            var passwordHash = UserPassword.GetPasswordHash(
+                newUserCredentials.LoginData,
+                salt,
+                newUserCredentials.Password);
 
             var responseBrokerMock = new Mock<Response<IOperationResult<IUserCredentialsResponse>>>();
             requestBrokerMock = new Mock<IRequestClient<IUserCredentialsRequest>>();
@@ -122,6 +134,10 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
                 Token = JwtToken
             };
 
+            loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+               .Returns(validationResultIsValidMock.Object);
+
             tokenEngineMock
                 .Setup(X => X.Create(newUserCredentials.LoginData))
                 .Returns(JwtToken);
@@ -134,6 +150,10 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenPasswordsHasNotMatch()
         {
+            loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+               .Returns(validationResultIsValidMock.Object);
+
             newUserCredentials.Password = "Example";
 
             Assert.ThrowsAsync<ForbiddenException>(() => command.Execute(newUserCredentials));
@@ -146,6 +166,10 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
             operationResult.Errors = new List<string>() { "User email not found" };
             operationResult.Body = null;
 
+            loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+               .Returns(validationResultIsValidMock.Object);
+
             Assert.ThrowsAsync<NotFoundException>(
                 () => command.Execute(newUserCredentials),
                 "User email not found");
@@ -156,13 +180,9 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
         {
             newUserCredentials.LoginData = string.Empty;
 
-            validatorMock
-                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-                .Returns(new ValidationResult(
-                    new List<ValidationFailure>
-                    {
-                        new ValidationFailure("error", "something", null)
-                    }));
+            loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+               .Returns(validationResultError);
 
             Assert.ThrowsAsync<ValidationException>(() => command.Execute(newUserCredentials));
         }
