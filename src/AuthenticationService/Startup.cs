@@ -2,7 +2,6 @@ using GreenPipes;
 using LT.DigitalOffice.AuthenticationService.Broker.Consumers;
 using LT.DigitalOffice.AuthenticationService.Business;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
-using LT.DigitalOffice.AuthenticationService.Models.Dto;
 using LT.DigitalOffice.AuthenticationService.Token;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
 using LT.DigitalOffice.AuthenticationService.Validation;

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-[assembly: InternalsVisibleToAttribute("LT.DigitalOffice.AuthenticationService.Business.UnitTests")]
+[assembly: InternalsVisibleTo("LT.DigitalOffice.AuthenticationService.Business.UnitTests")]
 namespace LT.DigitalOffice.AuthenticationService.Business
 {
     internal static class UserPassword

@@ -16,7 +16,6 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 {
     public class LoginCommand : ILoginCommand
     {
-        private string loginData;
         private readonly ITokenEngine tokenEngine;
         private readonly ILoginValidator validator;
         private readonly IRequestClient<IUserCredentialsRequest> requestClient;
@@ -35,11 +34,9 @@ namespace LT.DigitalOffice.AuthenticationService.Business
         {
             validator.ValidateAndThrowCustom(request);
 
-            this.loginData = request.LoginData;
+            var savedUserCredentials = await GetUserCredentials(request.LoginData);
 
-            var savedUserCredentials = await GetUserCredentials();
-
-            VerifyPasswordHash(savedUserCredentials, request.Password);
+            VerifyPasswordHash(savedUserCredentials, request.Password, request.LoginData);
 
             var result = new LoginResult
             {
@@ -50,7 +47,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
             return result;
         }
 
-        private async Task<IUserCredentialsResponse> GetUserCredentials()
+        private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
         {
             var brokerResponse = await requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
                 IUserCredentialsRequest.CreateObj(loginData));
@@ -63,16 +60,16 @@ namespace LT.DigitalOffice.AuthenticationService.Business
             return brokerResponse.Message.Body;
         }
 
-        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword)
+        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword, string loginData)
         {
             string requestPasswordHash = UserPassword.GetPasswordHash(
                 loginData,
                 savedUserCredentials.Salt,
                 requestPassword);
 
-            if (savedUserCredentials.PasswordHash != requestPasswordHash)
+            if (!string.Equals(savedUserCredentials.PasswordHash, requestPasswordHash))
             {
-                throw new ForbiddenException("Wrong user password.");
+                throw new ForbiddenException("Wrong user credentials.");
             }
         }
     }
