@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
     {
         private Mock<IJwtSigningEncodingKey> signingEncodingKey;
         private SymmetricSecurityKey expectedKey;
-        private NewToken newToken;
+        private TokenEngine tokenEngine;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
 
             signingEncodingKey = new Mock<IJwtSigningEncodingKey>();
 
-            var tokenOptions = Options.Create(new TokenOptions
+            var tokenOptions = Options.Create(new TokenSettings
             {
                 TokenAudience = "AuthClient",
                 TokenIssuer = "AuthClient",
@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
 
             expectedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
 
-            newToken = new NewToken(signingEncodingKey.Object, tokenOptions);
+            tokenEngine = new TokenEngine(signingEncodingKey.Object, tokenOptions);
         }
 
         [Test]
@@ -46,9 +46,8 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
                 .SetupGet(x => x.SigningAlgorithm)
                 .Returns(signingAlgorithm);
 
-            var newJwt = newToken.GetNewToken(emailUser);
+            var newJwt = tokenEngine.Create(emailUser);
 
-            Assert.IsInstanceOf<string>(newJwt);
             Assert.IsNotEmpty(newJwt);
         }
     }

@@ -8,15 +8,15 @@ namespace LT.DigitalOffice.AuthenticationService.Token
     {
         private const string SIGNING_SECURITY_KEY = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
 
-        private readonly SymmetricSecurityKey secretKey;
+        private readonly SymmetricSecurityKey _secretKey;
 
-        public string SigningAlgorithm { get; } = SecurityAlgorithms.HmacSha256;
+        public string SigningAlgorithm => SecurityAlgorithms.HmacSha256;
 
         public SigningSymmetricKey()
         {
-            this.secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SIGNING_SECURITY_KEY));
+            _secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SIGNING_SECURITY_KEY));
         }
 
-        public SecurityKey GetKey() => this.secretKey;
+        public SecurityKey GetKey() => _secretKey;
     }
 }

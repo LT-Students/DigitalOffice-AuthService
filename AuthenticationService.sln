@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Token
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Validation.UnitTests", "test\AuthenticationService.Validation.UnitTests\AuthenticationService.Validation.UnitTests.csproj", "{F1C7FBFB-8833-4455-B6B3-4220A3E854A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationService.Models.BrokerRequest", "src\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.BrokerRequest.csproj", "{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Models.Broker", "src\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.Broker.csproj", "{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

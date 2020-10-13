@@ -1,34 +1,69 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
+using LT.DigitalOffice.Kernel.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace LT.DigitalOffice.AuthenticationService.Token
 {
+    /// <inheritdoc/>
     public class JwtValidator : IJwtValidator
     {
-        private readonly TokenValidationParameters validationParameters;
+        private readonly IJwtSigningDecodingKey _decodingKey;
+        private readonly IOptions<TokenSettings> _options;
+        private readonly ILogger<JwtValidator> _logger;
 
-        public JwtValidator([FromServices] TokenValidationParameters validationParameters)
+        public JwtValidator(
+            [FromServices] IJwtSigningDecodingKey decodingKey,
+            [FromServices] IOptions<TokenSettings> options,
+            [FromServices] ILogger<JwtValidator> logger)
         {
-            this.validationParameters = validationParameters;
+            _decodingKey = decodingKey;
+            _options = options;
+            _logger = logger;
         }
 
-        public void ValidateJwt(string jwt)
+        /// <inheritdoc/>
+        public void ValidateAndThrow(string jwt)
         {
+            if (string.IsNullOrEmpty(jwt))
+            {
+                throw new BadRequestException("Token can not be empty.");
+            }
+
             try
             {
-                new JwtSecurityTokenHandler()
-                    .ValidateToken(jwt, validationParameters, out _);
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = _options.Value.TokenIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = _options.Value.TokenAudience,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = _decodingKey.GetKey(),
+                    ValidateIssuerSigningKey = true
+                };
+
+                new JwtSecurityTokenHandler().ValidateToken(jwt, validationParameters, out _);
             }
-            catch(SecurityTokenValidationException exception)
+            catch (SecurityTokenValidationException exc)
             {
-                throw new Exception($"Token failed validation: {exception.Message}");
+                string message = "Token failed validation.";
+
+                _logger.LogInformation($"{message}{Environment.NewLine}{exc}");
+
+                throw new ForbiddenException(message);
             }
-            catch(ArgumentException exception)
+            catch (Exception exc)
             {
-                throw new Exception($"Token was wrong format: {exception.Message}");
+                string message = "Token format was wrong.";
+
+                _logger.LogInformation($"{message}{Environment.NewLine}{exc}");
+
+                throw new BadRequestException(message);
             }
         }
     }
