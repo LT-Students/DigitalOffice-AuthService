@@ -22,18 +22,14 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
     public class OperationResult<T> : IOperationResult<T>
     {
         public bool IsSuccess { get; set; }
-
         public List<string> Errors { get; set; }
-
         public T Body { get; set; }
     }
 
     public class UserCredentialsResponse : IUserCredentialsResponse
     {
         public Guid UserId { get; set; }
-
         public string PasswordHash { get; set; }
-
         public string Salt { get; set; }
         public string UserLogin { get; set; }
     }
