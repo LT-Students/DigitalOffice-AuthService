@@ -35,6 +35,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
         public string PasswordHash { get; set; }
 
         public string Salt { get; set; }
+        public string UserLogin { get; set; }
     }
 
     public class UserLoginCommandTests
@@ -64,7 +65,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
 
             newUserCredentials = new LoginRequest
             {
-                LoginData = "Example@gmail.com",
+                LoginData = "User_login_example",
                 Password = "Example_1234"
             };
 
@@ -101,7 +102,8 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
             {
                 UserId = Guid.NewGuid(),
                 PasswordHash = passwordHash,
-                Salt = salt
+                Salt = salt,
+                UserLogin = newUserCredentials.LoginData
             };
 
             operationResult = new OperationResult<UserCredentialsResponse>

@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
 
             var savedUserCredentials = await GetUserCredentials(request.LoginData);
 
-            VerifyPasswordHash(savedUserCredentials, request.Password, request.LoginData);
+            VerifyPasswordHash(savedUserCredentials, request.Password, savedUserCredentials.UserLogin);
 
             var result = new LoginResult
             {
@@ -60,10 +60,10 @@ namespace LT.DigitalOffice.AuthenticationService.Business
             return brokerResponse.Message.Body;
         }
 
-        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword, string loginData)
+        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword, string userLogin)
         {
             string requestPasswordHash = UserPassword.GetPasswordHash(
-                loginData,
+                userLogin,
                 savedUserCredentials.Salt,
                 requestPassword);
 
