@@ -10,8 +10,6 @@ using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthenticationService.Business
@@ -36,13 +34,13 @@ namespace LT.DigitalOffice.AuthenticationService.Business
         {
             validator.ValidateAndThrowCustom(request);
 
-            var userCredentials = await GetUserCredentials(request.LoginData);
+            var savedUserCredentials = await GetUserCredentials(request.LoginData);
 
-            VerifyPasswordHash(request.Password, userCredentials.PasswordHash);
+            VerifyPasswordHash(savedUserCredentials, request.Password, savedUserCredentials.UserLogin);
 
             var result = new LoginResult
             {
-                UserId = userCredentials.UserId,
+                UserId = savedUserCredentials.UserId,
                 Token = tokenEngine.Create(request.LoginData)
             };
 
@@ -62,15 +60,16 @@ namespace LT.DigitalOffice.AuthenticationService.Business
             return brokerResponse.Message.Body;
         }
 
-        private void VerifyPasswordHash(string requestPassword, string savedPasswordHash)
+        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword, string userLogin)
         {
-            var shaM = new SHA512Managed();
+            string requestPasswordHash = UserPassword.GetPasswordHash(
+                userLogin,
+                savedUserCredentials.Salt,
+                requestPassword);
 
-            var requestPasswordHash = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.UTF8.GetBytes(requestPassword)));
-
-            if (!string.Equals(savedPasswordHash, requestPasswordHash))
+            if (!string.Equals(savedUserCredentials.PasswordHash, requestPasswordHash))
             {
-                throw new ForbiddenException();
+                throw new ForbiddenException("Wrong user credentials.");
             }
         }
     }

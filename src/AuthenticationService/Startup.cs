@@ -122,7 +122,7 @@ namespace LT.DigitalOffice.AuthenticationService
             services.AddTransient<ILoginValidator, LoginValidator>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseHealthChecks("/api/healthcheck");
 
