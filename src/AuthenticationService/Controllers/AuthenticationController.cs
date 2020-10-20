@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
-using LT.DigitalOffice.AuthenticationService.Models.Dto;
+using LT.DigitalOffice.AuthenticationService.Models.Dto.Requests;
+using LT.DigitalOffice.AuthenticationService.Models.Dto.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace LT.DigitalOffice.AuthenticationService.Controllers
     public class AuthenticationController
     {
         [HttpPost("login")]
-        public async Task<UserLoginResult> LoginUser(
-                [FromServices] IUserLoginCommand command,
-                [FromBody] UserLoginInfoRequest userCredentials)
+        public async Task<LoginResult> LoginUser(
+            [FromServices] ILoginCommand command,
+            [FromBody] LoginRequest userCredentials)
         {
             return await command.Execute(userCredentials);
         }

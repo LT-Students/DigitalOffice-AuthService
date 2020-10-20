@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="9.2.2" />
     <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AuthenticationService.Broker\AuthenticationService.Broker.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.Broker.csproj" />
     <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
     <ProjectReference Include="..\AuthenticationService.Token\AuthenticationService.Token.csproj" />
+    <ProjectReference Include="..\AuthenticationService.Validation\AuthenticationService.Validation.csproj" />
   </ItemGroup>
 
 </Project>

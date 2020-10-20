@@ -1,5 +1,7 @@
-﻿using LT.DigitalOffice.AuthenticationService.Token;
+using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 using System;
@@ -9,97 +11,86 @@ using System.Text;
 
 namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
 {
-    class JwtValidationTests
+    public class JwtValidationTests
     {
-        string audience;
-        string userEmail;
-        private string userJwt;
-        SymmetricSecurityKey encodingKey;
-        private JwtValidator jwtValidation;
+        private string _audience;
+        private string _userEmail;
+        private string _userJwt;
+        private SymmetricSecurityKey _encodingKey;
+        private JwtValidator _jwtValidation;
+        private IJwtSigningDecodingKey _decodingKey;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            string signingSecurityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
+            const string signingSecurityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
 
-            userEmail = "Example_123@gmail.com";
+            _userEmail = "Example_123@gmail.com";
 
-            encodingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSecurityKey));
+            _encodingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSecurityKey));
 
-            var validationParameters = new TokenValidationParameters
+            _decodingKey = (IJwtSigningDecodingKey)new SigningSymmetricKey();
+
+            var options = Options.Create(new TokenSettings
             {
-                ValidateIssuer = true,
-                ValidIssuer = "AuthService",
-                ValidateAudience = true,
-                ValidAudience = "Client",
-                ValidateLifetime = true,
-                IssuerSigningKey = encodingKey,
-                ValidateIssuerSigningKey = true
-            };
+                TokenIssuer = "AuthService",
+                TokenAudience = "Client"
+            });
 
-            jwtValidation = new JwtValidator(validationParameters);
+            _jwtValidation = new JwtValidator(_decodingKey, options, NullLogger<JwtValidator>.Instance);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenTokenIsNotValid()
         {
-            audience = "";
+            _audience = "";
 
             CreateToken();
-
-            var expectedExeption = "IDX10214: Audience validation failed. Audiences: '[PII is hidden. For more " +
-                "details, see https://aka.ms/IdentityModel/PII.]'. Did not match: " +
-                "validationParameters.ValidAudience: '[PII is hidden. For more details, " +
-                "see https://aka.ms/IdentityModel/PII.]' or validationParameters.ValidAudiences: " +
-                "'[PII is hidden. For more details, see https://aka.ms/IdentityModel/PII.]'.";
-
-            Assert.Throws<BadRequestException>(() => jwtValidation.ValidateJwt(userJwt),
-                $"Token failed validation: { expectedExeption }");
+            Assert.Throws<ForbiddenException>(
+                () => _jwtValidation.ValidateAndThrow(_userJwt),
+                "Token failed validation.");
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenTokeWasWrongFormat()
+        public void ShouldThrowExceptionWhenTokenWasWrongFormat()
         {
-            userJwt = "Example_userJwt";
+            _userJwt = "Example_userJwt";
 
-            var expectedExeption = "IDX12741: JWT: '[PII is hidden. For more details, " +
-                "see https://aka.ms/IdentityModel/PII.]' must have three segments (JWS) or five segments (JWE).";
-
-
-            Assert.Throws<BadRequestException>(() => jwtValidation.ValidateJwt(userJwt),
-                $"Token was wrong format: { expectedExeption}");
+            Assert.Throws<BadRequestException>(
+                () => _jwtValidation.ValidateAndThrow(_userJwt),
+                "Token was wrong format.");
         }
 
         [Test]
         public void ShouldNotThrowsWhenTokenIsValid()
         {
-            audience = "Client";
+            _audience = "Client";
 
             CreateToken();
-            jwtValidation.ValidateJwt(userJwt);
+
+            _jwtValidation.ValidateAndThrow(_userJwt);
         }
 
         private void CreateToken()
         {
             var signingAlgorithm = SecurityAlgorithms.HmacSha256;
 
-            var claims = new Claim[]
+            var claims = new []
             {
-                new Claim(ClaimTypes.NameIdentifier, userEmail)
+                new Claim(ClaimTypes.NameIdentifier, _userEmail)
             };
 
             var jwt = new JwtSecurityToken(
-                    issuer: "AuthService",
-                    audience: audience,
-                    notBefore: DateTime.UtcNow,
-                    claims: claims,     // Contains information of user email
-                    expires: DateTime.Now.AddMinutes(5),
-                    signingCredentials: new SigningCredentials(
-                            encodingKey,
-                            signingAlgorithm)
-                    );
+                issuer: "AuthService",
+                audience: _audience,
+                notBefore: DateTime.UtcNow,
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(5),
+                signingCredentials: new SigningCredentials(
+                    _encodingKey,
+                    signingAlgorithm));
 
-            userJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            _userJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         }
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// Validate user token.
         /// </summary>
-        /// <param name="jwt">String user token.</param>
-        void ValidateJwt(string jwt);
+        /// <param name="jwt">User token.</param>
+        void ValidateAndThrow(string jwt);
     }
 }

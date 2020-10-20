@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthenticationService.Broker.Consumers
 {
-    public class UserJwtConsumer : IConsumer<IUserJwtRequest>
+    public class JwtConsumer : IConsumer<IUserJwtRequest>
     {
-        private readonly IJwtValidator jwtValidator;
+        private readonly IJwtValidator _jwtValidator;
 
-        public UserJwtConsumer([FromServices] IJwtValidator jwtValidator)
+        public JwtConsumer([FromServices] IJwtValidator jwtValidator)
         {
-            this.jwtValidator = jwtValidator;
+            _jwtValidator = jwtValidator;
         }
 
         public async Task Consume(ConsumeContext<IUserJwtRequest> context)
@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.Consumers
 
         private bool GetValidationResultJwt(IUserJwtRequest request)
         {
-            jwtValidator.ValidateJwt(request.UserJwt);
+            _jwtValidator.ValidateAndThrow(request.UserJwt);
 
             return true;
         }
