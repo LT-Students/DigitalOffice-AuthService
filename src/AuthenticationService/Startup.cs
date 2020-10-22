@@ -128,7 +128,9 @@ namespace LT.DigitalOffice.AuthenticationService
 
             app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
 
-            //app.UseHttpsRedirection();
+#if RELEASE
+            app.UseHttpsRedirection();
+#endif
 
             app.UseRouting();
 
