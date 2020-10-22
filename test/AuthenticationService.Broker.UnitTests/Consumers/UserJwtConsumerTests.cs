@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
 
             try
             {
-                var requestClient = await harness.ConnectRequestClient<IUserJwtRequest>();
+                var requestClient = await harness.ConnectRequestClient<ICheckTokenRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<bool>>(new
                 {
@@ -53,7 +53,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
                 Assert.That(response.Message.IsSuccess, Is.True);
                 Assert.AreEqual(expectedErrors, response.Message.Errors);
                 Assert.AreEqual(expectedBody, response.Message.Body);
-                Assert.That(consumerTestHarness.Consumed.Select<IUserJwtRequest>().Any(), Is.True);
+                Assert.That(consumerTestHarness.Consumed.Select<ICheckTokenRequest>().Any(), Is.True);
                 Assert.That(harness.Sent.Select<IOperationResult<bool>>().Any(), Is.True);
             }
             finally
@@ -78,7 +78,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
 
             try
             {
-                var requestClient = await harness.ConnectRequestClient<IUserJwtRequest>();
+                var requestClient = await harness.ConnectRequestClient<ICheckTokenRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<bool>>(new
                 {
@@ -88,7 +88,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
                 Assert.That(response.Message.IsSuccess, Is.False);
                 Assert.AreEqual(expectedBody, response.Message.Body);
                 Assert.AreEqual(expectedErrors, String.Join(", ", response.Message.Errors));
-                Assert.That(consumerTestHarness.Consumed.Select<IUserJwtRequest>().Any(), Is.True);
+                Assert.That(consumerTestHarness.Consumed.Select<ICheckTokenRequest>().Any(), Is.True);
                 Assert.That(harness.Sent.Select<IOperationResult<bool>>().Any(), Is.True);
             }
             finally
