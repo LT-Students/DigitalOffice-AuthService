@@ -93,7 +93,6 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
             var responseBrokerMock = new Mock<Response<IOperationResult<IUserCredentialsResponse>>>();
             requestBrokerMock = new Mock<IRequestClient<IUserCredentialsRequest>>();
 
-
             brokerResponse = new UserCredentialsResponse
             {
                 UserId = Guid.NewGuid(),
