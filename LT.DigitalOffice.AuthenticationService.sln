@@ -29,6 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Valid
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Models.Broker", "src\AuthenticationService.Models.BrokerRequest\AuthenticationService.Models.Broker.csproj", "{A8953B91-A2B6-4A4A-B5D8-1BD41DEEEE1B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{B9B3E453-FB72-473C-802E-F1075A8D9A20}"
+	ProjectSection(SolutionItems) = preProject
+		Common.Configurations.targets = Common.Configurations.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -2,6 +2,7 @@ using GreenPipes;
 using LT.DigitalOffice.AuthenticationService.Broker.Consumers;
 using LT.DigitalOffice.AuthenticationService.Business;
 using LT.DigitalOffice.AuthenticationService.Business.Interfaces;
+using LT.DigitalOffice.AuthenticationService.Configuration;
 using LT.DigitalOffice.AuthenticationService.Token;
 using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
 using LT.DigitalOffice.AuthenticationService.Validation;
@@ -31,8 +32,6 @@ namespace LT.DigitalOffice.AuthenticationService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<RabbitMQOptions>(Configuration);
-
             ConfigureJwt(services);
 
             services.AddHealthChecks();
@@ -81,11 +80,8 @@ namespace LT.DigitalOffice.AuthenticationService
 
         private void ConfigureRabbitMq(IServiceCollection services)
         {
-            string appSettingSection = "RabbitMQ";
-            string serviceName = Configuration.GetSection(appSettingSection)["Username"];
-            string servicePassword = Configuration.GetSection(appSettingSection)["Password"];
-
-            var uri = $"rabbitmq://localhost/UserService_{serviceName}";
+            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<RabbitMqConfig>();
+            var uri = $"rabbitmq://localhost/UserService_{rabbitMqConfig.Username}";
 
             services.AddMassTransit(x =>
             {
@@ -95,11 +91,11 @@ namespace LT.DigitalOffice.AuthenticationService
                 {
                     cfg.Host("localhost", "/", host =>
                     {
-                        host.Username($"{serviceName}_{servicePassword}");
-                        host.Password(servicePassword);
+                        host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
+                        host.Password(rabbitMqConfig.Password);
                     });
 
-                    cfg.ReceiveEndpoint($"{serviceName}_ValidationJwt", ep =>
+                    cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}_ValidationJwt", ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
