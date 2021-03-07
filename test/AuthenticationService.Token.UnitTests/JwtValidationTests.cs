@@ -78,7 +78,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
 
             var claims = new []
             {
-                new Claim(ClaimTypes.NameIdentifier, _userEmail)
+                new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString())
             };
 
             var jwt = new JwtSecurityToken(

@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
         [Test]
         public void SuccessfulCreateNewSymmetricSecurityKey()
         {
-            string signingAlgorithm = "HS256";
+            string signingAlgorithm = "HS512";
             string securityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
 
             var expectedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
