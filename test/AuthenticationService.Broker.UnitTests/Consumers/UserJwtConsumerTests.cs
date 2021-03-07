@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
         public async Task ShouldSendResponseToBrokerWhenUserJwtIsValid()
         {
             object expectedErrors = null;
-            var expectedBody = true;
+            Guid expectedBody = Guid.Empty;
 
             await harness.Start();
 
@@ -45,16 +45,15 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
             {
                 var requestClient = await harness.ConnectRequestClient<ICheckTokenRequest>();
 
-                var response = await requestClient.GetResponse<IOperationResult<bool>>(new
+                var response = await requestClient.GetResponse<IOperationResult<Guid>>(new
                 {
                     UserJwt = userJwt
                 });
 
-                Assert.That(response.Message.IsSuccess, Is.True);
+                Assert.IsTrue(response.Message.IsSuccess);
                 Assert.AreEqual(expectedErrors, response.Message.Errors);
                 Assert.AreEqual(expectedBody, response.Message.Body);
-                Assert.That(consumerTestHarness.Consumed.Select<ICheckTokenRequest>().Any(), Is.True);
-                Assert.That(harness.Sent.Select<IOperationResult<bool>>().Any(), Is.True);
+                Assert.IsTrue(consumerTestHarness.Consumed.Select<ICheckTokenRequest>().Any());
             }
             finally
             {
@@ -68,7 +67,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
         public async Task ShouldExceptioWhenUserJwtIsNotValid()
         {
             string expectedErrors = "Token failed validation";
-            bool expectedBody = false;
+            Guid expectedBody = Guid.Empty;
 
             jwtValidationMock
                 .Setup(x => x.Validate(It.IsAny<string>()))
@@ -80,16 +79,15 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
             {
                 var requestClient = await harness.ConnectRequestClient<ICheckTokenRequest>();
 
-                var response = await requestClient.GetResponse<IOperationResult<bool>>(new
+                var response = await requestClient.GetResponse<IOperationResult<Guid>>(new
                 {
                     UserJwt = userJwt
                 });
 
-                Assert.That(response.Message.IsSuccess, Is.False);
+                Assert.IsFalse(response.Message.IsSuccess);
                 Assert.AreEqual(expectedBody, response.Message.Body);
-                Assert.AreEqual(expectedErrors, String.Join(", ", response.Message.Errors));
-                Assert.That(consumerTestHarness.Consumed.Select<ICheckTokenRequest>().Any(), Is.True);
-                Assert.That(harness.Sent.Select<IOperationResult<bool>>().Any(), Is.True);
+                Assert.AreEqual(expectedErrors, string.Join(", ", response.Message.Errors));
+                Assert.IsTrue(consumerTestHarness.Consumed.Select<ICheckTokenRequest>().Any());
             }
             finally
             {
