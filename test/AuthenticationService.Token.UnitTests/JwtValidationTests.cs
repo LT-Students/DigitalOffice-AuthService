@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
         private string _userEmail;
         private string _userJwt;
         private SymmetricSecurityKey _encodingKey;
-        private JwtValidator _jwtValidation;
+        private TokenValidator _jwtValidation;
         private IJwtSigningDecodingKey _decodingKey;
 
         [OneTimeSetUp]
@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
                 TokenAudience = "Client"
             });
 
-            _jwtValidation = new JwtValidator(_decodingKey, options, NullLogger<JwtValidator>.Instance);
+            _jwtValidation = new TokenValidator(_decodingKey, options, NullLogger<TokenValidator>.Instance);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
             CreateToken();
 
             Assert.Throws<ForbiddenException>(
-                () => _jwtValidation.ValidateAndThrow(_userJwt),
+                () => _jwtValidation.Validate(_userJwt),
                 "Token failed validation.");
         }
 
@@ -58,7 +58,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
             _userJwt = "Example_userJwt";
 
             Assert.Throws<BadRequestException>(
-                () => _jwtValidation.ValidateAndThrow(_userJwt),
+                () => _jwtValidation.Validate(_userJwt),
                 "Token was wrong format.");
         }
 
@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
 
             CreateToken();
 
-            _jwtValidation.ValidateAndThrow(_userJwt);
+            _jwtValidation.Validate(_userJwt);
         }
 
         private void CreateToken()

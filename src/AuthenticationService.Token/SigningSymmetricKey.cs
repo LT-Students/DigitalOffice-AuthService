@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token
 
         private readonly SymmetricSecurityKey _secretKey;
 
-        public string SigningAlgorithm => SecurityAlgorithms.HmacSha256;
+        public string SigningAlgorithm => SecurityAlgorithms.HmacSha512;
 
         public SigningSymmetricKey()
         {

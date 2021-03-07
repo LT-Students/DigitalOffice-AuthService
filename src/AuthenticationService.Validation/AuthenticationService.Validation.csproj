@@ -2,10 +2,8 @@
 
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\AuthenticationService.Models.Dto\AuthenticationService.Models.Dto.csproj" />
-  </ItemGroup></Project>
+  </ItemGroup>
+
+</Project>

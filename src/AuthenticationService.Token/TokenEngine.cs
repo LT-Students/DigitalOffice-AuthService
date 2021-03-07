@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.AuthenticationService.Token.Interfaces;
+using LT.DigitalOffice.Kernel.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,8 @@ namespace LT.DigitalOffice.AuthenticationService.Token
 {
     public class TokenEngine : ITokenEngine
     {
+        public const string ClaimUserId = "UserId";
+
         private readonly IJwtSigningEncodingKey _signingEncodingKey;
         private readonly IOptions<TokenSettings> _tokenOptions;
 
@@ -22,11 +25,16 @@ namespace LT.DigitalOffice.AuthenticationService.Token
         }
 
         /// <inheritdoc />
-        public string Create(string login)
+        public string Create(Guid userId)
         {
-            var claims = new []
+            if (userId == Guid.Empty)
             {
-                new Claim(ClaimTypes.NameIdentifier, login)
+                throw new NotFoundException("User was not found.");
+            }
+
+            var claims = new[]
+            {
+                new Claim(ClaimUserId, userId.ToString())
             };
 
             var jwt = new JwtSecurityToken(

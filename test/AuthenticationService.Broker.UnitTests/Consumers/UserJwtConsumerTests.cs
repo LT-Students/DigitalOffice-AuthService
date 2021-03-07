@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
 {
     class UserJwtConsumerTests
     {
-        private Mock<IJwtValidator> jwtValidationMock;
+        private Mock<ITokenValidator> jwtValidationMock;
 
         private InMemoryTestHarness harness;
         private string userJwt;
@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
             userJwt = "Example_jwt";
 
             harness = new InMemoryTestHarness();
-            jwtValidationMock = new Mock<IJwtValidator>();
+            jwtValidationMock = new Mock<ITokenValidator>();
 
             consumerTestHarness = harness.Consumer(() => new JwtConsumer(jwtValidationMock.Object));
         }
@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.AuthenticationService.Broker.UnitTests.Consumers
             bool expectedBody = false;
 
             jwtValidationMock
-                .Setup(x => x.ValidateAndThrow(It.IsAny<string>()))
+                .Setup(x => x.Validate(It.IsAny<string>()))
                 .Throws(new Exception("Token failed validation"));
 
             await harness.Start();

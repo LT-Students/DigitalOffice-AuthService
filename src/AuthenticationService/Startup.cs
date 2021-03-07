@@ -56,7 +56,7 @@ namespace LT.DigitalOffice.AuthenticationService
 
             services.AddTransient<ITokenEngine, TokenEngine>();
 
-            services.AddTransient<IJwtValidator, JwtValidator>();
+            services.AddTransient<ITokenValidator, TokenValidator>();
 
             services.Configure<TokenSettings>(Configuration.GetSection("TokenSettings"));
 

@@ -3,31 +3,30 @@ using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthenticationService.Broker.Consumers
 {
     public class JwtConsumer : IConsumer<ICheckTokenRequest>
     {
-        private readonly IJwtValidator _jwtValidator;
+        private readonly ITokenValidator _tokenValidator;
 
-        public JwtConsumer([FromServices] IJwtValidator jwtValidator)
+        public JwtConsumer([FromServices] ITokenValidator jwtValidator)
         {
-            _jwtValidator = jwtValidator;
+            _tokenValidator = jwtValidator;
         }
 
         public async Task Consume(ConsumeContext<ICheckTokenRequest> context)
         {
             var response = OperationResultWrapper.CreateResponse(GetValidationResultJwt, context.Message);
 
-            await context.RespondAsync<IOperationResult<bool>>(response);
+            await context.RespondAsync<IOperationResult<Guid>>(response);
         }
 
-        private bool GetValidationResultJwt(ICheckTokenRequest request)
+        private Guid GetValidationResultJwt(ICheckTokenRequest request)
         {
-            _jwtValidator.ValidateAndThrow(request.Token);
-
-            return true;
+            return _tokenValidator.Validate(request.Token);
         }
     }
 }

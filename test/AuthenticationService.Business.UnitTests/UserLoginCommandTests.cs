@@ -136,7 +136,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business.UnitTests
                .Returns(validationResultIsValidMock.Object);
 
             tokenEngineMock
-                .Setup(X => X.Create(newUserCredentials.LoginData))
+                .Setup(X => X.Create(brokerResponse.UserId))
                 .Returns(JwtToken);
 
             SerializerAssert.AreEqual(expectedLoginResponse, command.Execute(newUserCredentials).Result);

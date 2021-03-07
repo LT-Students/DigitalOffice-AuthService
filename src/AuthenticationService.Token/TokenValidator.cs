@@ -6,20 +6,21 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace LT.DigitalOffice.AuthenticationService.Token
 {
     /// <inheritdoc/>
-    public class JwtValidator : IJwtValidator
+    public class TokenValidator : ITokenValidator
     {
         private readonly IJwtSigningDecodingKey _decodingKey;
         private readonly IOptions<TokenSettings> _options;
-        private readonly ILogger<JwtValidator> _logger;
+        private readonly ILogger<TokenValidator> _logger;
 
-        public JwtValidator(
+        public TokenValidator(
             [FromServices] IJwtSigningDecodingKey decodingKey,
             [FromServices] IOptions<TokenSettings> options,
-            [FromServices] ILogger<JwtValidator> logger)
+            [FromServices] ILogger<TokenValidator> logger)
         {
             _decodingKey = decodingKey;
             _options = options;
@@ -27,9 +28,9 @@ namespace LT.DigitalOffice.AuthenticationService.Token
         }
 
         /// <inheritdoc/>
-        public void ValidateAndThrow(string jwt)
+        public Guid Validate(string token)
         {
-            if (string.IsNullOrEmpty(jwt))
+            if (string.IsNullOrEmpty(token))
             {
                 throw new BadRequestException("Token can not be empty.");
             }
@@ -47,7 +48,14 @@ namespace LT.DigitalOffice.AuthenticationService.Token
                     ValidateIssuerSigningKey = true
                 };
 
-                new JwtSecurityTokenHandler().ValidateToken(jwt, validationParameters, out _);
+                ClaimsPrincipal claims = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
+                var userIdClaimValue = claims.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaimValue) || !Guid.TryParse(userIdClaimValue, out Guid userId))
+                {
+                    throw new SecurityTokenValidationException("Bad token format.");
+                }
+
+                return userId;
             }
             catch (SecurityTokenValidationException exc)
             {

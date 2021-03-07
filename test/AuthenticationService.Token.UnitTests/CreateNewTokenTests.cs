@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using NUnit.Framework;
+using System;
 using System.Text;
 
 namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
@@ -46,7 +47,7 @@ namespace LT.DigitalOffice.AuthenticationService.Token.UnitTests
                 .SetupGet(x => x.SigningAlgorithm)
                 .Returns(signingAlgorithm);
 
-            var newJwt = tokenEngine.Create(emailUser);
+            var newJwt = tokenEngine.Create(Guid.NewGuid());
 
             Assert.IsNotEmpty(newJwt);
         }

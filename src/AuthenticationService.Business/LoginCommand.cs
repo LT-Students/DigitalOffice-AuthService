@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.AuthenticationService.Business
             var result = new LoginResult
             {
                 UserId = savedUserCredentials.UserId,
-                Token = tokenEngine.Create(request.LoginData)
+                Token = tokenEngine.Create(savedUserCredentials.UserId)
             };
 
             return result;
