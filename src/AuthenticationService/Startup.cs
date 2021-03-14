@@ -81,7 +81,6 @@ namespace LT.DigitalOffice.AuthenticationService
         private void ConfigureRabbitMq(IServiceCollection services)
         {
             var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<RabbitMqConfig>();
-            var uri = $"rabbitmq://localhost/UserService_{rabbitMqConfig.Username}";
 
             services.AddMassTransit(x =>
             {
@@ -89,13 +88,13 @@ namespace LT.DigitalOffice.AuthenticationService
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("localhost", "/", host =>
+                    cfg.Host(rabbitMqConfig.Host, "/", host =>
                     {
                         host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
                         host.Password(rabbitMqConfig.Password);
                     });
 
-                    cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}_ValidationJwt", ep =>
+                    cfg.ReceiveEndpoint(rabbitMqConfig.AuthenticationServiceValidationEndpoint, ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
@@ -104,7 +103,7 @@ namespace LT.DigitalOffice.AuthenticationService
                     });
                 });
 
-                x.AddRequestClient<IUserCredentialsRequest>(new Uri(uri));
+                x.AddRequestClient<IUserCredentialsRequest>(new Uri(rabbitMqConfig.UserServiceCredentialsUrl));
             });
         }
 
