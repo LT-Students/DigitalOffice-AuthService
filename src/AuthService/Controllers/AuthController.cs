@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Controllers
 {
-  [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController
+    public class AuthController
     {
         [HttpPost("login")]
         public async Task<LoginResult> LoginUser(
