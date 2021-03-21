@@ -14,7 +14,6 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
     public class JwtValidationTests
     {
         private string _audience;
-        private string _userEmail;
         private string _userJwt;
         private SymmetricSecurityKey _encodingKey;
         private TokenValidator _jwtValidation;
@@ -24,8 +23,6 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
         public void OneTimeSetUp()
         {
             const string signingSecurityKey = "qyfi0sjv1f3uiwkyflnwfvr7thpzxdxygt8t9xbhielymv20";
-
-            _userEmail = "Example_123@gmail.com";
 
             _encodingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSecurityKey));
 

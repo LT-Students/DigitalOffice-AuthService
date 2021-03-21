@@ -36,7 +36,6 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
         [Test]
         public void SuccessfulCreateNewToken()
         {
-            string emailUser = "digitalOffice@lanit-tercom.com";
             string signingAlgorithm = "HS256";
 
             signingEncodingKey

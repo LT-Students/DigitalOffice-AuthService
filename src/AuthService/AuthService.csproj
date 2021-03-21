@@ -3,9 +3,7 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-    <PackageReference Include="GreenPipes" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,12 +13,5 @@
     <ProjectReference Include="..\AuthService.Token\AuthService.Token.csproj" />
     <ProjectReference Include="..\AuthService.Validation\AuthService.Validation.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <LangVersion>preview</LangVersion>
-    <UserSecretsId>4dfac504-9e3d-4eb3-bdd9-642ce453e67d</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
-  </PropertyGroup>
 
 </Project>
