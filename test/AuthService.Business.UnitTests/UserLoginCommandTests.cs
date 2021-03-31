@@ -10,7 +10,7 @@ using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
 using Moq;
@@ -21,13 +21,6 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.UnitTests
 {
-  public class OperationResult<T> : IOperationResult<T>
-    {
-        public bool IsSuccess { get; set; }
-        public List<string> Errors { get; set; }
-        public T Body { get; set; }
-    }
-
     public class UserCredentialsResponse : IUserCredentialsResponse
     {
         public Guid UserId { get; set; }
@@ -43,14 +36,15 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         private Mock<ILoginValidator> loginValidatorMock;
         private Mock<ValidationResult> validationResultIsValidMock;
         private Mock<IRequestClient<IUserCredentialsRequest>> requestBrokerMock;
+        private Mock<IOperationResult<IUserCredentialsResponse>> operationResultMock;
+        private Mock<IUserCredentialsResponse> brokerResponseMock;
 
         private string salt;
         private ILoginCommand command;
 
         private LoginRequest newUserCredentials;
         private ValidationResult validationResultError;
-        private UserCredentialsResponse brokerResponse;
-        private OperationResult<UserCredentialsResponse> operationResult;
+
         #endregion
 
         #region Setup
@@ -95,20 +89,16 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
             var responseBrokerMock = new Mock<Response<IOperationResult<IUserCredentialsResponse>>>();
             requestBrokerMock = new Mock<IRequestClient<IUserCredentialsRequest>>();
 
-            brokerResponse = new UserCredentialsResponse
-            {
-                UserId = Guid.NewGuid(),
-                PasswordHash = passwordHash,
-                Salt = salt,
-                UserLogin = newUserCredentials.LoginData
-            };
+            brokerResponseMock = new Mock<IUserCredentialsResponse>();
+            brokerResponseMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
+            brokerResponseMock.Setup(x => x.PasswordHash).Returns(passwordHash);
+            brokerResponseMock.Setup(x => x.Salt).Returns(salt);
+            brokerResponseMock.Setup(x => x.UserLogin).Returns(newUserCredentials.LoginData);
 
-            operationResult = new OperationResult<UserCredentialsResponse>
-            {
-                IsSuccess = true,
-                Errors = new List<string>(),
-                Body = brokerResponse
-            };
+            operationResultMock = new Mock<IOperationResult<IUserCredentialsResponse>>();
+            operationResultMock.Setup(x => x.Body).Returns(brokerResponseMock.Object);
+            operationResultMock.Setup(x => x.IsSuccess).Returns(true);
+            operationResultMock.Setup(x => x.Errors).Returns(new List<string>());
 
             requestBrokerMock.Setup(
                 x => x.GetResponse<IOperationResult<IUserCredentialsResponse>>(
@@ -117,7 +107,7 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
 
             responseBrokerMock
                 .SetupGet(x => x.Message)
-                .Returns(operationResult);
+                .Returns(operationResultMock.Object);
         }
         #endregion
 
@@ -129,7 +119,7 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
 
             var expectedLoginResponse = new LoginResult
             {
-                UserId = brokerResponse.UserId,
+                UserId = brokerResponseMock.Object.UserId,
                 Token = JwtToken
             };
 
@@ -138,7 +128,7 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
                .Returns(validationResultIsValidMock.Object);
 
             tokenEngineMock
-                .Setup(X => X.Create(brokerResponse.UserId))
+                .Setup(X => X.Create(brokerResponseMock.Object.UserId))
                 .Returns(JwtToken);
 
             SerializerAssert.AreEqual(expectedLoginResponse, command.Execute(newUserCredentials).Result);
@@ -161,9 +151,9 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenUserEmailHasNotMatchInDb()
         {
-            operationResult.IsSuccess = false;
-            operationResult.Errors = new List<string>() { "User email not found" };
-            operationResult.Body = null;
+            operationResultMock.Setup(x => x.Body).Returns((IUserCredentialsResponse)null);
+            operationResultMock.Setup(x => x.IsSuccess).Returns(false);
+            operationResultMock.Setup(x => x.Errors).Returns(new List<string> { "User email not found" });
 
             loginValidatorMock
                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))

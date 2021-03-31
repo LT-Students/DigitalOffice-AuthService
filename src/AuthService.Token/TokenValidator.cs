@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

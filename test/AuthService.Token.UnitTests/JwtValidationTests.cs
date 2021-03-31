@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

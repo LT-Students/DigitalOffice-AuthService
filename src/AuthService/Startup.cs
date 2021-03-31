@@ -10,12 +10,14 @@ using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 
@@ -117,11 +119,11 @@ namespace LT.DigitalOffice.AuthService
             services.AddTransient<ILoginValidator, LoginValidator>();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             app.UseHealthChecks("/api/healthcheck");
 
-            app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
+            app.AddExceptionsHandler(loggerFactory);
 
 #if RELEASE
             app.UseHttpsRedirection();
