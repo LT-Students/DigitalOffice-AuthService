@@ -20,6 +20,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace LT.DigitalOffice.AuthService
 {
@@ -38,6 +40,8 @@ namespace LT.DigitalOffice.AuthService
 
             services.AddHealthChecks();
 
+            services.AddHttpContextAccessor();
+            
             services.AddControllers();
 
             ConfigureRabbitMq(services);
@@ -121,8 +125,6 @@ namespace LT.DigitalOffice.AuthService
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseHealthChecks("/api/healthcheck");
-
             app.AddExceptionsHandler(loggerFactory);
 
 #if RELEASE
@@ -140,9 +142,19 @@ namespace LT.DigitalOffice.AuthService
                         .AllowAnyHeader()
                         .AllowAnyMethod());
 
+            var rabbitMqConfig = Configuration
+                .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
+                .Get<RabbitMqConfig>();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                
+                endpoints.MapHealthChecks($"/{rabbitMqConfig.Password}/hc", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
     }
