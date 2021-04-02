@@ -1,4 +1,3 @@
-using GreenPipes;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
 using LT.DigitalOffice.AuthService.Business.Commands;
 using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
@@ -8,13 +7,11 @@ using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,7 +20,7 @@ using System;
 
 namespace LT.DigitalOffice.AuthService
 {
-  public class Startup
+    public class Startup
     {
         public IConfiguration Configuration { get; }
 
@@ -59,6 +56,8 @@ namespace LT.DigitalOffice.AuthService
             services.AddTransient<ITokenEngine, TokenEngine>();
 
             services.AddTransient<ITokenValidator, TokenValidator>();
+
+            services.AddHttpContextAccessor();
 
             services.Configure<TokenSettings>(Configuration.GetSection("TokenSettings"));
 
