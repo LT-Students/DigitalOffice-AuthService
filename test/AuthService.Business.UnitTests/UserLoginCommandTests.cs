@@ -13,10 +13,13 @@ using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.UnitTests
@@ -34,6 +37,7 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         #region private fields
         private Mock<ITokenEngine> tokenEngineMock;
         private Mock<ILoginValidator> loginValidatorMock;
+        private Mock<ILogger<LoginCommand>> loggerMock;
         private Mock<ValidationResult> validationResultIsValidMock;
         private Mock<IRequestClient<IUserCredentialsRequest>> requestBrokerMock;
         private Mock<IOperationResult<IUserCredentialsResponse>> operationResultMock;
@@ -51,9 +55,24 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+
             salt = "Example_Salt1";
 
             loginValidatorMock = new Mock<ILoginValidator>();
+            loggerMock = new Mock<ILogger<LoginCommand>>();
+
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            var connectionInfo = new Mock<ConnectionInfo>();
+
+            connectionInfo
+                .Setup(x => x.RemoteIpAddress)
+                .Returns(new IPAddress(byte.MinValue));
+
+            httpContextAccessorMock
+                .Setup(x =>
+                    x.HttpContext.Connection)
+                .Returns(connectionInfo.Object);
 
             newUserCredentials = new LoginRequest
             {
@@ -76,7 +95,12 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
             BrokerSetUp();
 
             tokenEngineMock = new Mock<ITokenEngine>();
-            command = new LoginCommand(tokenEngineMock.Object, loginValidatorMock.Object, requestBrokerMock.Object);
+            command = new LoginCommand(
+                tokenEngineMock.Object,
+                loginValidatorMock.Object,
+                loggerMock.Object,
+                httpContextAccessorMock.Object,
+                requestBrokerMock.Object);
         }
 
         public void BrokerSetUp()
