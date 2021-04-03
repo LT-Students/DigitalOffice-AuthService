@@ -11,8 +11,8 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.Commands
@@ -26,11 +26,11 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
         private readonly IRequestClient<IUserCredentialsRequest> _requestClient;
 
         public LoginCommand(
-            [FromServices] ITokenEngine tokenEngine,
-            [FromServices] ILoginValidator validator,
-            [FromServices] ILogger<LoginCommand> logger,
-            [FromServices] IHttpContextAccessor httpContextAccessor,
-            [FromServices] IRequestClient<IUserCredentialsRequest> requestClient)
+            ITokenEngine tokenEngine,
+            ILoginValidator validator,
+            ILogger<LoginCommand> logger,
+            IHttpContextAccessor httpContextAccessor,
+            IRequestClient<IUserCredentialsRequest> requestClient)
         {
             _logger = logger;
             _validator = validator;
@@ -48,14 +48,14 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             _logger.LogInformation($"User login data: { request.LoginData }. " +
                 $"User ip address: { userIp } ,who tried to authenticate.");
 
-            var savedUserCredentials = await GetUserCredentials(request.LoginData);
+            var userCredentials = await GetUserCredentials(request.LoginData);
 
-            VerifyPasswordHash(savedUserCredentials, request.Password, savedUserCredentials.UserLogin);
+            VerifyPasswordHash(userCredentials, request.Password);
 
             var result = new LoginResult
             {
-                UserId = savedUserCredentials.UserId,
-                Token = _tokenEngine.Create(savedUserCredentials.UserId)
+                UserId = userCredentials.UserId,
+                Token = _tokenEngine.Create(userCredentials.UserId)
             };
 
             return result;
@@ -63,30 +63,49 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
         private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
         {
-            var brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
-              IUserCredentialsRequest.CreateObj(loginData));
+            IUserCredentialsResponse userCredentials = null;
+            Response<IOperationResult<IUserCredentialsResponse>> brokerResponse;
+
+            try
+            {
+                brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
+                    IUserCredentialsRequest.CreateObj(loginData));
+
+                if (brokerResponse.Message.IsSuccess)
+                {
+                    userCredentials = brokerResponse.Message.Body;
+                }
+            }
+            catch (Exception exc)
+            {
+                var message = "Exception while searched user to UserDb.";
+
+                _logger.LogError(exc, message);
+
+                throw new Exception(message);
+            }
 
             if (!brokerResponse.Message.IsSuccess)
             {
-                _logger.LogWarning("Exception while searched user credentials. " +
+                _logger.LogWarning($"Can not find user credentials. " +
                     $"Reason: { string.Join(",", brokerResponse.Message.Errors) }");
 
                 throw new NotFoundException(brokerResponse.Message.Errors);
             }
 
-            return brokerResponse.Message.Body;
+            return userCredentials;
         }
 
-        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword, string userLogin)
+        private void VerifyPasswordHash(IUserCredentialsResponse userCredentials, string requestPassword)
         {
             string requestPasswordHash = PasswordHelper.GetPasswordHash(
-              userLogin,
-              savedUserCredentials.Salt,
+              userCredentials.UserLogin,
+              userCredentials.Salt,
               requestPassword);
 
-            if (!string.Equals(savedUserCredentials.PasswordHash, requestPasswordHash))
+            if (!string.Equals(userCredentials.PasswordHash, requestPasswordHash))
             {
-                _logger.LogWarning($"Wrong user credentials. User login data: { userLogin }");
+                _logger.LogWarning($"Wrong user credentials. User login data: { userCredentials.UserLogin }");
 
                 throw new ForbiddenException("Wrong user credentials.");
             }
