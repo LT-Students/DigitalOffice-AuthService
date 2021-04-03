@@ -63,18 +63,26 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
         private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
         {
-            IUserCredentialsResponse userCredentials = null;
-            Response<IOperationResult<IUserCredentialsResponse>> brokerResponse;
+            IUserCredentialsResponse userCredentials;
 
             try
             {
-                brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
+                var brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
                     IUserCredentialsRequest.CreateObj(loginData));
 
-                if (brokerResponse.Message.IsSuccess)
+                if (!brokerResponse.Message.IsSuccess)
                 {
-                    userCredentials = brokerResponse.Message.Body;
+                    _logger.LogWarning($"Can not find user credentials. " +
+                        $"Reason: { string.Join(",", brokerResponse.Message.Errors) }");
+
+                    throw new NotFoundException(brokerResponse.Message.Errors);
                 }
+
+                userCredentials = brokerResponse.Message.Body;
+            }
+            catch (NotFoundException)
+            {
+                throw;
             }
             catch (Exception exc)
             {
@@ -83,14 +91,6 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
                 _logger.LogError(exc, message);
 
                 throw new Exception(message);
-            }
-
-            if (!brokerResponse.Message.IsSuccess)
-            {
-                _logger.LogWarning($"Can not find user credentials. " +
-                    $"Reason: { string.Join(",", brokerResponse.Message.Errors) }");
-
-                throw new NotFoundException(brokerResponse.Message.Errors);
             }
 
             return userCredentials;
