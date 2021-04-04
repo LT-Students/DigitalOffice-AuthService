@@ -26,6 +26,8 @@ namespace LT.DigitalOffice.AuthService
     {
         public IConfiguration Configuration { get; }
 
+        private RabbitMqConfig _rabbitMqConfig;
+        
         #region private methods
 
         private void ConfigureJwt(IServiceCollection services)
@@ -62,7 +64,7 @@ namespace LT.DigitalOffice.AuthService
 
         private void ConfigureRabbitMq(IServiceCollection services)
         {
-            rabbitMqConfig = Configuration
+            _rabbitMqConfig = Configuration
                 .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
                 .Get<RabbitMqConfig>();
 
@@ -70,18 +72,18 @@ namespace LT.DigitalOffice.AuthService
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitMqConfig.Host, "/", host =>
+                    cfg.Host(_rabbitMqConfig.Host, "/", host =>
                     {
-                        host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
-                        host.Password(rabbitMqConfig.Password);
+                        host.Username($"{_rabbitMqConfig.Username}_{_rabbitMqConfig.Password}");
+                        host.Password(_rabbitMqConfig.Password);
                     });
 
-                    cfg.ReceiveEndpoint(rabbitMqConfig.ValidateTokenEndpoint, ep =>
+                    cfg.ReceiveEndpoint(_rabbitMqConfig.ValidateTokenEndpoint, ep =>
                     {
                         ep.ConfigureConsumer<CheckTokenConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint(rabbitMqConfig.GetTokenEndpoint, ep =>
+                    cfg.ReceiveEndpoint(_rabbitMqConfig.GetTokenEndpoint, ep =>
                     {
                         ep.ConfigureConsumer<GetTokenConsumer>(context);
                     });
@@ -91,7 +93,7 @@ namespace LT.DigitalOffice.AuthService
                 x.AddConsumer<GetTokenConsumer>();
 
                 x.AddRequestClient<IUserCredentialsRequest>(
-                  new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserCredentialsEndpoint}"));
+                  new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.GetUserCredentialsEndpoint}"));
             });
         }
 
@@ -149,7 +151,7 @@ namespace LT.DigitalOffice.AuthService
             {
                 endpoints.MapControllers();
                 
-                endpoints.MapHealthChecks($"/{rabbitMqConfig.Password}/hc", new HealthCheckOptions
+                endpoints.MapHealthChecks($"/{_rabbitMqConfig.Password}/hc", new HealthCheckOptions
                 {
                     Predicate = _ => true,
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
