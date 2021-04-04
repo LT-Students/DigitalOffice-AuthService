@@ -43,11 +43,6 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
         {
             _validator.ValidateAndThrowCustom(request);
 
-            var userIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
-            _logger.LogInformation($"User login data: { request.LoginData }. " +
-                $"User ip address: { userIp } ,who tried to authenticate.");
-
             var userCredentials = await GetUserCredentials(request.LoginData);
 
             VerifyPasswordHash(userCredentials, request.Password);
@@ -63,17 +58,22 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
         private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
         {
+            Guid? brokerRequestId;
             IUserCredentialsResponse userCredentials;
+
+            var userIpAdress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
             try
             {
                 var brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
                     IUserCredentialsRequest.CreateObj(loginData));
 
+                brokerRequestId = brokerResponse.RequestId;
+
                 if (!brokerResponse.Message.IsSuccess)
                 {
                     _logger.LogWarning($"Can not find user credentials. " +
-                        $"Reason: { string.Join(",", brokerResponse.Message.Errors) }");
+                        $"Reason: '{string.Join(",", brokerResponse.Message.Errors)}'", brokerRequestId);
 
                     throw new NotFoundException(brokerResponse.Message.Errors);
                 }
@@ -93,6 +93,9 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
                 throw new Exception(message);
             }
 
+            _logger.LogInformation($"User login data: '{loginData}'. " +
+                $"User ip address: '{userIpAdress}', who tried to authenticate.", brokerRequestId);
+
             return userCredentials;
         }
 
@@ -105,7 +108,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
             if (!string.Equals(userCredentials.PasswordHash, requestPasswordHash))
             {
-                _logger.LogWarning($"Wrong user credentials. User login data: { userCredentials.UserLogin }");
+                _logger.LogWarning($"Wrong user credentials. User login data: '{userCredentials.UserLogin}'");
 
                 throw new ForbiddenException("Wrong user credentials.");
             }
