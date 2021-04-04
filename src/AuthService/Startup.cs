@@ -1,4 +1,3 @@
-using GreenPipes;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
 using LT.DigitalOffice.AuthService.Business.Commands;
 using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
@@ -8,13 +7,11 @@ using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,30 +20,11 @@ using System;
 
 namespace LT.DigitalOffice.AuthService
 {
-  public class Startup
+    public class Startup
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            ConfigureJwt(services);
-
-            services.AddHealthChecks();
-
-            services.AddControllers();
-
-            ConfigureRabbitMq(services);
-
-            services.AddMassTransitHostedService();
-
-            ConfigureCommands(services);
-            ConfigureValidators(services);
-        }
+        #region private methods
 
         private void ConfigureJwt(IServiceCollection services)
         {
@@ -88,8 +66,6 @@ namespace LT.DigitalOffice.AuthService
 
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<TokenConsumer>();
-
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host(rabbitMqConfig.Host, "/", host =>
@@ -100,9 +76,17 @@ namespace LT.DigitalOffice.AuthService
 
                     cfg.ReceiveEndpoint(rabbitMqConfig.ValidateTokenEndpoint, ep =>
                     {
-                        ep.ConfigureConsumer<TokenConsumer>(context);
+                        ep.ConfigureConsumer<CheckTokenConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint(rabbitMqConfig.GetTokenEndpoint, ep =>
+                    {
+                        ep.ConfigureConsumer<GetTokenConsumer>(context);
                     });
                 });
+
+                x.AddConsumer<CheckTokenConsumer>();
+                x.AddConsumer<GetTokenConsumer>();
 
                 x.AddRequestClient<IUserCredentialsRequest>(
                   new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserCredentialsEndpoint}"));
@@ -117,6 +101,27 @@ namespace LT.DigitalOffice.AuthService
         private void ConfigureValidators(IServiceCollection services)
         {
             services.AddTransient<ILoginValidator, LoginValidator>();
+        }
+
+        #endregion
+
+        #region public methods
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddHealthChecks();
+            services.AddControllers();
+            services.AddMassTransitHostedService();
+
+            ConfigureRabbitMq(services);
+            ConfigureJwt(services);
+            ConfigureCommands(services);
+            ConfigureValidators(services);
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
@@ -145,5 +150,7 @@ namespace LT.DigitalOffice.AuthService
                 endpoints.MapControllers();
             });
         }
+
+        #endregion
     }
 }

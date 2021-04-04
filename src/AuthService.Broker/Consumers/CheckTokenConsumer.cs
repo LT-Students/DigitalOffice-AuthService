@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Broker.Consumers
 {
-  public class TokenConsumer : IConsumer<ICheckTokenRequest>
+  public class CheckTokenConsumer : IConsumer<ICheckTokenRequest>
     {
         private readonly ITokenValidator _tokenValidator;
 
-        public TokenConsumer(ITokenValidator tokenValidator)
+        public CheckTokenConsumer(ITokenValidator tokenValidator)
         {
             _tokenValidator = tokenValidator;
         }

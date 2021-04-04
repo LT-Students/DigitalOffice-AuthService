@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.AuthService.Broker.UnitTests.Consumers
 
         private InMemoryTestHarness harness;
         private string userJwt;
-        private ConsumerTestHarness<TokenConsumer> consumerTestHarness;
+        private ConsumerTestHarness<CheckTokenConsumer> consumerTestHarness;
 
         #region Setup
         [SetUp]
@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.AuthService.Broker.UnitTests.Consumers
             harness = new InMemoryTestHarness();
             jwtValidationMock = new Mock<ITokenValidator>();
 
-            consumerTestHarness = harness.Consumer(() => new TokenConsumer(jwtValidationMock.Object));
+            consumerTestHarness = harness.Consumer(() => new CheckTokenConsumer(jwtValidationMock.Object));
         }
         #endregion
 
