@@ -72,7 +72,6 @@ namespace LT.DigitalOffice.AuthService
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.UseHealthCheck(context);
                     cfg.Host(_rabbitMqConfig.Host, "/", host =>
                     {
                         host.Username($"{_rabbitMqConfig.Username}_{_rabbitMqConfig.Password}");
