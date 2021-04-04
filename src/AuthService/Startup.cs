@@ -29,6 +29,8 @@ namespace LT.DigitalOffice.AuthService
     {
         public IConfiguration Configuration { get; }
 
+        private RabbitMqConfig rabbitMqConfig;
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -86,7 +88,7 @@ namespace LT.DigitalOffice.AuthService
 
         private void ConfigureRabbitMq(IServiceCollection services)
         {
-            RabbitMqConfig rabbitMqConfig = Configuration
+            rabbitMqConfig = Configuration
                 .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
                 .Get<RabbitMqConfig>();
 
@@ -142,10 +144,6 @@ namespace LT.DigitalOffice.AuthService
                         .AllowAnyHeader()
                         .AllowAnyMethod());
 
-            var rabbitMqConfig = Configuration
-                .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
-                .Get<RabbitMqConfig>();
-            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
