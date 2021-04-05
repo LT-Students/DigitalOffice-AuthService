@@ -20,8 +20,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace LT.DigitalOffice.AuthService
 {
@@ -32,8 +30,6 @@ namespace LT.DigitalOffice.AuthService
 
         public IConfiguration Configuration { get; }
 
-        private RabbitMqConfig _rabbitMqConfig;
-        
         #region private methods
 
         private void ConfigureJwt(IServiceCollection services)
