@@ -1,3 +1,4 @@
+using HealthChecks.UI.Client;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
 using LT.DigitalOffice.AuthService.Business.Commands;
 using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
@@ -7,12 +8,13 @@ using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,6 +25,9 @@ namespace LT.DigitalOffice.AuthService
 {
     public class Startup : BaseApiInfo
     {
+        private readonly BaseServiceInfoConfig _serviceInfoConfig;
+        private readonly RabbitMqConfig _rabbitMqConfig;
+
         public IConfiguration Configuration { get; }
 
         #region private methods
@@ -61,26 +66,22 @@ namespace LT.DigitalOffice.AuthService
 
         private void ConfigureRabbitMq(IServiceCollection services)
         {
-            RabbitMqConfig rabbitMqConfig = Configuration
-                .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
-                .Get<RabbitMqConfig>();
-
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitMqConfig.Host, "/", host =>
+                    cfg.Host(_rabbitMqConfig.Host, "/", host =>
                     {
-                        host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
-                        host.Password(rabbitMqConfig.Password);
+                        host.Username($"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}");
+                        host.Password(_serviceInfoConfig.Id);
                     });
 
-                    cfg.ReceiveEndpoint(rabbitMqConfig.ValidateTokenEndpoint, ep =>
+                    cfg.ReceiveEndpoint(_rabbitMqConfig.ValidateTokenEndpoint, ep =>
                     {
                         ep.ConfigureConsumer<CheckTokenConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint(rabbitMqConfig.GetTokenEndpoint, ep =>
+                    cfg.ReceiveEndpoint(_rabbitMqConfig.GetTokenEndpoint, ep =>
                     {
                         ep.ConfigureConsumer<GetTokenConsumer>(context);
                     });
@@ -90,7 +91,7 @@ namespace LT.DigitalOffice.AuthService
                 x.AddConsumer<GetTokenConsumer>();
 
                 x.AddRequestClient<IUserCredentialsRequest>(
-                  new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserCredentialsEndpoint}"));
+                  new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.GetUserCredentialsEndpoint}"));
             });
         }
 
@@ -112,15 +113,28 @@ namespace LT.DigitalOffice.AuthService
         {
             Configuration = configuration;
 
+            _serviceInfoConfig = Configuration
+                .GetSection(BaseServiceInfoConfig.SectionName)
+                .Get<BaseServiceInfoConfig>();
+
+            _rabbitMqConfig = Configuration
+                .GetSection(BaseRabbitMqConfig.SectionName)
+                .Get<RabbitMqConfig>();
+
             Version = "1.2.3";
             Description = "AuthService is an API intended to work with user authentication, create token for user.";
             StartTime = DateTime.UtcNow;
-            ApiName = "LT Digital Office - AuthService";
+            ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
+            services
+                .AddHealthChecks()
+                .AddRabbitMQ(
+                    new Uri(
+                        $"amqp://{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}:{_serviceInfoConfig.Id}@{_rabbitMqConfig.Host}:5672/"));
+
             services.AddControllers();
             services.AddMassTransitHostedService();
 
@@ -132,13 +146,10 @@ namespace LT.DigitalOffice.AuthService
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseHealthChecks("/api/healthcheck");
-
-            app.UseExceptionsHandler(loggerFactory);
-
 #if RELEASE
             app.UseHttpsRedirection();
 #endif
+            app.UseExceptionsHandler(loggerFactory);
 
             app.UseApiInformation();
 
@@ -156,6 +167,12 @@ namespace LT.DigitalOffice.AuthService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
 
