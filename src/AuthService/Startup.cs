@@ -118,7 +118,7 @@ namespace LT.DigitalOffice.AuthService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
+            services.AddHealthChecks(); // TODO doesn't work with RabbitMQ when it is stop
 
             services.AddControllers();
             services.AddMassTransitHostedService();
