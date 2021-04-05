@@ -9,6 +9,7 @@ using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -20,7 +21,7 @@ using System;
 
 namespace LT.DigitalOffice.AuthService
 {
-    public class Startup
+    public class Startup : BaseApiInfo
     {
         public IConfiguration Configuration { get; }
 
@@ -110,6 +111,11 @@ namespace LT.DigitalOffice.AuthService
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Version = "1.2.3";
+            Description = "AuthService is an API intended to work with user authentication, create token for user.";
+            StartTime = DateTime.UtcNow;
+            ApiName = "LT Digital Office - AuthService";
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -128,11 +134,13 @@ namespace LT.DigitalOffice.AuthService
         {
             app.UseHealthChecks("/api/healthcheck");
 
-            app.AddExceptionsHandler(loggerFactory);
+            app.UseExceptionsHandler(loggerFactory);
 
 #if RELEASE
             app.UseHttpsRedirection();
 #endif
+
+            app.UseApiInformation();
 
             app.UseRouting();
 
