@@ -13,7 +13,6 @@ using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.Commands
 {
@@ -39,11 +38,16 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<LoginResult> Execute(LoginRequest request)
+        public LoginResult Execute(LoginRequest request)
         {
             _validator.ValidateAndThrowCustom(request);
 
-            var userCredentials = await GetUserCredentials(request.LoginData);
+            var userCredentials = GetUserCredentials(request.LoginData);
+
+            if (userCredentials == null)
+            {
+                throw new NotFoundException("Could not find user.");
+            }
 
             VerifyPasswordHash(userCredentials, request.Password);
 
@@ -56,47 +60,38 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             return result;
         }
 
-        private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
+        private IUserCredentialsResponse GetUserCredentials(string loginData)
         {
-            Guid? brokerRequestId;
-            IUserCredentialsResponse userCredentials;
-
-            var userIpAdress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            var userIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            string userIpStr = $"User ip address: '{userIp}', who tried to authenticate.";
 
             try
             {
-                var brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
-                    IUserCredentialsRequest.CreateObj(loginData));
+                var brokerResponse = _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
+                    IUserCredentialsRequest.CreateObj(loginData)).Result;
 
-                brokerRequestId = brokerResponse.RequestId;
+                var brokerRequestId = brokerResponse.RequestId;
 
-                if (!brokerResponse.Message.IsSuccess)
+                if (brokerResponse.Message.IsSuccess)
                 {
-                    _logger.LogWarning($"Can not find user credentials. " +
-                        $"Reason: '{string.Join(",", brokerResponse.Message.Errors)}'", brokerRequestId);
+                    var userCredentials = brokerResponse.Message.Body;
 
-                    throw new NotFoundException(brokerResponse.Message.Errors);
+                    _logger.LogInformation($"User login data: '{loginData}'. " +
+                        userIpStr, brokerRequestId);
+
+                    return userCredentials;
                 }
 
-                userCredentials = brokerResponse.Message.Body;
-            }
-            catch (NotFoundException)
-            {
-                throw;
+                _logger.LogWarning($"Can not find user credentials." +
+                    $"Reason: '{string.Join(",", brokerResponse.Message.Errors)}'" +
+                    userIpStr, brokerRequestId);
             }
             catch (Exception exc)
             {
-                var message = "Exception while searched user to UserDb.";
-
-                _logger.LogError(exc, message);
-
-                throw new Exception(message);
+                _logger.LogError(exc, "Exception while searched user to UserDb.");
             }
 
-            _logger.LogInformation($"User login data: '{loginData}'. " +
-                $"User ip address: '{userIpAdress}', who tried to authenticate.", brokerRequestId);
-
-            return userCredentials;
+            return null;
         }
 
         private void VerifyPasswordHash(IUserCredentialsResponse userCredentials, string requestPassword)

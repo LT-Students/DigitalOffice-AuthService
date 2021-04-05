@@ -24,31 +24,22 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.UnitTests
 {
-    public class UserCredentialsResponse : IUserCredentialsResponse
-    {
-        public Guid UserId { get; set; }
-        public string PasswordHash { get; set; }
-        public string Salt { get; set; }
-        public string UserLogin { get; set; }
-    }
-
     public class UserLoginCommandTests
     {
         #region private fields
-        private Mock<ITokenEngine> tokenEngineMock;
-        private Mock<ILoginValidator> loginValidatorMock;
-        private Mock<ILogger<LoginCommand>> loggerMock;
-        private Mock<ValidationResult> validationResultIsValidMock;
-        private Mock<IRequestClient<IUserCredentialsRequest>> requestBrokerMock;
-        private Mock<IOperationResult<IUserCredentialsResponse>> operationResultMock;
-        private Mock<IUserCredentialsResponse> brokerResponseMock;
+        private Mock<ITokenEngine> _tokenEngineMock;
+        private Mock<ILoginValidator> _loginValidatorMock;
+        private Mock<ILogger<LoginCommand>> _loggerMock;
+        private Mock<IRequestClient<IUserCredentialsRequest>> _requestBrokerMock;
+        private Mock<Response<IOperationResult<IUserCredentialsResponse>>> _responseBrokerMock;
+        private Mock<IOperationResult<IUserCredentialsResponse>> _operationResultMock;
+        private Mock<IUserCredentialsResponse> _brokerResponseMock;
 
-        private string salt;
-        private ILoginCommand command;
+        private string _salt;
+        private string _passwordHash;
+        private ILoginCommand _command;
 
-        private LoginRequest newUserCredentials;
-        private ValidationResult validationResultError;
-
+        private LoginRequest _request;
         #endregion
 
         #region Setup
@@ -56,10 +47,10 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         public void OneTimeSetUp()
         {
 
-            salt = "Example_Salt1";
+            _salt = "Example_Salt1";
 
-            loginValidatorMock = new Mock<ILoginValidator>();
-            loggerMock = new Mock<ILogger<LoginCommand>>();
+            _loginValidatorMock = new Mock<ILoginValidator>();
+            _loggerMock = new Mock<ILogger<LoginCommand>>();
 
             var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
 
@@ -74,64 +65,56 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
                     x.HttpContext.Connection)
                 .Returns(connectionInfo.Object);
 
-            newUserCredentials = new LoginRequest
+            _request = new LoginRequest
             {
                 LoginData = "User_login_example",
                 Password = "Example_1234"
             };
 
-            validationResultError = new ValidationResult(
-                new List<ValidationFailure>
-                {
-                    new ValidationFailure("error", "something", null)
-                });
-
-            validationResultIsValidMock = new Mock<ValidationResult>();
-
-            validationResultIsValidMock
-                .Setup(x => x.IsValid)
-                .Returns(true);
-
             BrokerSetUp();
 
-            tokenEngineMock = new Mock<ITokenEngine>();
-            command = new LoginCommand(
-                tokenEngineMock.Object,
-                loginValidatorMock.Object,
-                loggerMock.Object,
+            _tokenEngineMock = new Mock<ITokenEngine>();
+            _command = new LoginCommand(
+                _tokenEngineMock.Object,
+                _loginValidatorMock.Object,
+                _loggerMock.Object,
                 httpContextAccessorMock.Object,
-                requestBrokerMock.Object);
+                _requestBrokerMock.Object);
         }
 
-        public void BrokerSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            var passwordHash = PasswordHelper.GetPasswordHash(
-                newUserCredentials.LoginData,
-                salt,
-                newUserCredentials.Password);
+            _brokerResponseMock = new Mock<IUserCredentialsResponse>();
+            _brokerResponseMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
+            _brokerResponseMock.Setup(x => x.PasswordHash).Returns(_passwordHash);
+            _brokerResponseMock.Setup(x => x.Salt).Returns(_salt);
+            _brokerResponseMock.Setup(x => x.UserLogin).Returns(_request.LoginData);
 
-            var responseBrokerMock = new Mock<Response<IOperationResult<IUserCredentialsResponse>>>();
-            requestBrokerMock = new Mock<IRequestClient<IUserCredentialsRequest>>();
+            _operationResultMock = new Mock<IOperationResult<IUserCredentialsResponse>>();
+            _operationResultMock.Setup(x => x.Body).Returns(_brokerResponseMock.Object);
+            _operationResultMock.Setup(x => x.IsSuccess).Returns(true);
+            _operationResultMock.Setup(x => x.Errors).Returns(new List<string>());
 
-            brokerResponseMock = new Mock<IUserCredentialsResponse>();
-            brokerResponseMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
-            brokerResponseMock.Setup(x => x.PasswordHash).Returns(passwordHash);
-            brokerResponseMock.Setup(x => x.Salt).Returns(salt);
-            brokerResponseMock.Setup(x => x.UserLogin).Returns(newUserCredentials.LoginData);
-
-            operationResultMock = new Mock<IOperationResult<IUserCredentialsResponse>>();
-            operationResultMock.Setup(x => x.Body).Returns(brokerResponseMock.Object);
-            operationResultMock.Setup(x => x.IsSuccess).Returns(true);
-            operationResultMock.Setup(x => x.Errors).Returns(new List<string>());
-
-            requestBrokerMock.Setup(
+            _requestBrokerMock.Setup(
                 x => x.GetResponse<IOperationResult<IUserCredentialsResponse>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(responseBrokerMock.Object));
+                .Returns(Task.FromResult(_responseBrokerMock.Object));
 
-            responseBrokerMock
+            _responseBrokerMock
                 .SetupGet(x => x.Message)
-                .Returns(operationResultMock.Object);
+                .Returns(_operationResultMock.Object);
+        }
+
+        private void BrokerSetUp()
+        {
+            _passwordHash = PasswordHelper.GetPasswordHash(
+                _request.LoginData,
+                _salt,
+                _request.Password);
+
+            _responseBrokerMock = new Mock<Response<IOperationResult<IUserCredentialsResponse>>>();
+            _requestBrokerMock = new Mock<IRequestClient<IUserCredentialsRequest>>();
         }
         #endregion
 
@@ -143,19 +126,19 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
 
             var expectedLoginResponse = new LoginResult
             {
-                UserId = brokerResponseMock.Object.UserId,
+                UserId = _brokerResponseMock.Object.UserId,
                 Token = JwtToken
             };
 
-            loginValidatorMock
-               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-               .Returns(validationResultIsValidMock.Object);
+            _loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+               .Returns(true);
 
-            tokenEngineMock
-                .Setup(X => X.Create(brokerResponseMock.Object.UserId))
+            _tokenEngineMock
+                .Setup(X => X.Create(_brokerResponseMock.Object.UserId))
                 .Returns(JwtToken);
 
-            SerializerAssert.AreEqual(expectedLoginResponse, command.Execute(newUserCredentials).Result);
+            SerializerAssert.AreEqual(expectedLoginResponse, _command.Execute(_request));
         }
         #endregion
 
@@ -163,41 +146,52 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenPasswordsHasNotMatch()
         {
-            loginValidatorMock
-               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-               .Returns(validationResultIsValidMock.Object);
+            _loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+               .Returns(true);
 
-            newUserCredentials.Password = "Example";
+            _request.Password = "Example";
 
-            Assert.ThrowsAsync<ForbiddenException>(() => command.Execute(newUserCredentials));
+            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenNotConnectionToBroker()
+        {
+            _requestBrokerMock.Setup(
+                x => x.GetResponse<IOperationResult<IUserCredentialsResponse>>(
+                    It.IsAny<object>(), default, default))
+                .ThrowsAsync(new Exception());
+
+            Assert.Throws<NotFoundException>(() => _command.Execute(_request));
         }
 
         [Test]
         public void ShouldThrowExceptionWhenUserEmailHasNotMatchInDb()
         {
-            operationResultMock.Setup(x => x.Body).Returns((IUserCredentialsResponse)null);
-            operationResultMock.Setup(x => x.IsSuccess).Returns(false);
-            operationResultMock.Setup(x => x.Errors).Returns(new List<string> { "User email not found" });
+            _operationResultMock.Setup(x => x.Body).Returns((IUserCredentialsResponse)null);
+            _operationResultMock.Setup(x => x.IsSuccess).Returns(false);
+            _operationResultMock.Setup(x => x.Errors).Returns(new List<string> { "User email not found" });
 
-            loginValidatorMock
-               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-               .Returns(validationResultIsValidMock.Object);
+            _loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+               .Returns(true);
 
-            Assert.ThrowsAsync<NotFoundException>(
-                () => command.Execute(newUserCredentials),
+            Assert.Throws<NotFoundException>(
+                () => _command.Execute(_request),
                 "User email not found");
         }
 
         [Test]
         public void ShouldThrowExceptionWhenUserLoginInfoNotValid()
         {
-            newUserCredentials.LoginData = string.Empty;
+            _request.LoginData = string.Empty;
 
-            loginValidatorMock
-               .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-               .Returns(validationResultError);
+            _loginValidatorMock
+               .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+               .Returns(false);
 
-            Assert.ThrowsAsync<ValidationException>(() => command.Execute(newUserCredentials));
+            Assert.Throws<ValidationException>(() => _command.Execute(_request));
         }
         #endregion
     }
