@@ -1,3 +1,4 @@
+using HealthChecks.UI.Client;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
 using LT.DigitalOffice.AuthService.Business.Commands;
 using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
@@ -7,44 +8,32 @@ using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using MassTransit;
 using MassTransit.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.AuthService
 {
-    public class Startup
+    public class Startup : BaseApiInfo
     {
+        private readonly BaseServiceInfoConfig _serviceInfoConfig;
+        private readonly RabbitMqConfig _rabbitMqConfig;
+
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            ConfigureJwt(services);
-
-            services.AddHealthChecks();
-
-            services.AddControllers();
-
-            ConfigureRabbitMq(services);
-
-            services.AddMassTransitHostedService();
-
-            ConfigureCommands(services);
-            ConfigureValidators(services);
-        }
+        #region private methods
 
         private void ConfigureJwt(IServiceCollection services)
         {
@@ -82,30 +71,32 @@ namespace LT.DigitalOffice.AuthService
 
         private void ConfigureRabbitMq(IServiceCollection services)
         {
-            RabbitMqConfig rabbitMqConfig = Configuration
-                .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
-                .Get<RabbitMqConfig>();
-
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<TokenConsumer>();
-
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitMqConfig.Host, "/", host =>
+                    cfg.Host(_rabbitMqConfig.Host, "/", host =>
                     {
-                        host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
-                        host.Password(rabbitMqConfig.Password);
+                        host.Username($"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}");
+                        host.Password(_serviceInfoConfig.Id);
                     });
 
-                    cfg.ReceiveEndpoint(rabbitMqConfig.ValidateTokenEndpoint, ep =>
+                    cfg.ReceiveEndpoint(_rabbitMqConfig.ValidateTokenEndpoint, ep =>
                     {
-                        ep.ConfigureConsumer<TokenConsumer>(context);
+                        ep.ConfigureConsumer<CheckTokenConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint(_rabbitMqConfig.GetTokenEndpoint, ep =>
+                    {
+                        ep.ConfigureConsumer<GetTokenConsumer>(context);
                     });
                 });
 
+                x.AddConsumer<CheckTokenConsumer>();
+                x.AddConsumer<GetTokenConsumer>();
+
                 x.AddRequestClient<IUserCredentialsRequest>(
-                  new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserCredentialsEndpoint}"));
+                  new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.GetUserCredentialsEndpoint}"));
             });
         }
 
@@ -119,15 +110,54 @@ namespace LT.DigitalOffice.AuthService
             services.AddTransient<ILoginValidator, LoginValidator>();
         }
 
+        #endregion
+
+        #region public methods
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+
+            _serviceInfoConfig = Configuration
+                .GetSection(BaseServiceInfoConfig.SectionName)
+                .Get<BaseServiceInfoConfig>();
+
+            _rabbitMqConfig = Configuration
+                .GetSection(BaseRabbitMqConfig.SectionName)
+                .Get<RabbitMqConfig>();
+
+            Version = "1.2.3";
+            Description = "AuthService is an API intended to work with user authentication, create token for user.";
+            StartTime = DateTime.UtcNow;
+            ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
+            services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
+
+            services
+                .AddHealthChecks()
+                .AddRabbitMqCheck();
+
+            services.AddControllers();
+            services.AddMassTransitHostedService();
+
+            ConfigureRabbitMq(services);
+            ConfigureJwt(services);
+            ConfigureCommands(services);
+            ConfigureValidators(services);
+        }
+
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseHealthChecks("/api/healthcheck");
-
-            app.AddExceptionsHandler(loggerFactory);
-
 #if RELEASE
             app.UseHttpsRedirection();
 #endif
+            app.UseExceptionsHandler(loggerFactory);
+
+            app.UseApiInformation();
 
             app.UseRouting();
 
@@ -143,7 +173,21 @@ namespace LT.DigitalOffice.AuthService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
+                {
+                    ResultStatusCodes = new Dictionary<HealthStatus, int>
+                    {
+                        { HealthStatus.Unhealthy, 200 },
+                        { HealthStatus.Healthy, 200 },
+                        { HealthStatus.Degraded, 200 },
+                    },
+                    Predicate = check => check.Name != "masstransit-bus",
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
+
+        #endregion
     }
 }

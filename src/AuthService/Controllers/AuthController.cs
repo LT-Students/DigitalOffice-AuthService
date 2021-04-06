@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LT.DigitalOffice.AuthService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController
     {
