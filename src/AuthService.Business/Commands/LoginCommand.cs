@@ -44,11 +44,6 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
             var userCredentials = GetUserCredentials(request.LoginData);
 
-            var vd = string.Join(" ",
-          "Can not find user credentials.",
-          $"Reason: ''",
-          "Broker Conversation id: {ConversationId}");
-
             if (userCredentials == null)
             {
                 throw new NotFoundException("Could not find user.");
@@ -70,7 +65,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             var userIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
             string userIpTemplate = $"User ip address: {userIp}, who tried to authenticate.";
 
-            string messageTemplate = string.Join("",
+            string messageTemplate = string.Join(" ",
                         $"User login data: '{loginData}'.",
                         "Broker conversation id: {ConversationId}.",
                         userIpTemplate);
@@ -90,7 +85,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
                 }
 
                 var errors = string.Join(",", brokerResponse.Message.Errors);
-                messageTemplate = string.Join("",
+                messageTemplate = string.Join(" ",
                     "Can not find user credentials.",
                     $"Reason: '{errors}'",
                     "Broker Conversation id: {ConversationId}",
