@@ -63,28 +63,27 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
         private IUserCredentialsResponse GetUserCredentials(string loginData)
         {
             var userIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            string userIpStr = $"User ip address: '{userIp}', who tried to authenticate.";
+            string userIpTemplate = $"User ip address: {userIp}, who tried to authenticate.";
 
             try
             {
                 var brokerResponse = _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
                     IUserCredentialsRequest.CreateObj(loginData)).Result;
 
-                var brokerRequestId = brokerResponse.RequestId;
-
                 if (brokerResponse.Message.IsSuccess)
                 {
                     var userCredentials = brokerResponse.Message.Body;
 
-                    _logger.LogInformation($"User login data: '{loginData}'. " +
-                        userIpStr, brokerRequestId);
+                    _logger.LogInformation($"User login data: '{loginData}'." +
+                        "Broker conversation id: {ConversationId}." +
+                        userIpTemplate, brokerResponse.ConversationId);
 
                     return userCredentials;
                 }
 
                 _logger.LogWarning($"Can not find user credentials." +
                     $"Reason: '{string.Join(",", brokerResponse.Message.Errors)}'" +
-                    userIpStr, brokerRequestId);
+                    "Broker Conversation id: {ConversationId}" + userIpTemplate, brokerResponse.ConversationId);
             }
             catch (Exception exc)
             {

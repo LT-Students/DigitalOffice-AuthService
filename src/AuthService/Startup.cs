@@ -10,6 +10,7 @@ using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Extensions;
 using MassTransit;
+using MassTransit.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
