@@ -17,9 +17,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.AuthService
 {
@@ -129,11 +131,12 @@ namespace LT.DigitalOffice.AuthService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
+            services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
+
             services
                 .AddHealthChecks()
-                .AddRabbitMQ(
-                    new Uri(
-                        $"amqp://{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}:{_serviceInfoConfig.Id}@{_rabbitMqConfig.Host}:5672/"));
+                .AddRabbitMqCheck();
 
             services.AddControllers();
             services.AddMassTransitHostedService();
@@ -170,7 +173,13 @@ namespace LT.DigitalOffice.AuthService
 
                 endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
                 {
-                    Predicate = _ => true,
+                    ResultStatusCodes = new Dictionary<HealthStatus, int>
+                    {
+                        { HealthStatus.Unhealthy, 200 },
+                        { HealthStatus.Healthy, 200 },
+                        { HealthStatus.Degraded, 200 },
+                    },
+                    Predicate = check => check.Name != "masstransit-bus",
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
             });
