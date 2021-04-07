@@ -2,13 +2,14 @@ using HealthChecks.UI.Client;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
 using LT.DigitalOffice.AuthService.Business.Commands;
 using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
-using LT.DigitalOffice.AuthService.Configuration;
+using LT.DigitalOffice.AuthService.Models.Dto.Configurations;
 using LT.DigitalOffice.AuthService.Token;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Configurations;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using MassTransit;
@@ -29,6 +30,7 @@ namespace LT.DigitalOffice.AuthService
     {
         private readonly BaseServiceInfoConfig _serviceInfoConfig;
         private readonly RabbitMqConfig _rabbitMqConfig;
+        private readonly ILogger<Startup> _logger;
 
         public IConfiguration Configuration { get; }
 
@@ -92,19 +94,11 @@ namespace LT.DigitalOffice.AuthService
                 x.AddConsumer<CheckTokenConsumer>();
                 x.AddConsumer<GetTokenConsumer>();
 
-                x.AddRequestClient<IUserCredentialsRequest>(
-                  new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.GetUserCredentialsEndpoint}"));
+                x.AddRequestClients(
+                    _rabbitMqConfig,
+                    "LT.DigitalOffice.AuthService.Models.Broker",
+                    _logger);
             });
-        }
-
-        private void ConfigureCommands(IServiceCollection services)
-        {
-            services.AddTransient<ILoginCommand, LoginCommand>();
-        }
-
-        private void ConfigureValidators(IServiceCollection services)
-        {
-            services.AddTransient<ILoginValidator, LoginValidator>();
         }
 
         #endregion
@@ -127,12 +121,23 @@ namespace LT.DigitalOffice.AuthService
             Description = "AuthService is an API intended to work with user authentication, create token for user.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
+
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddFilter("LT.DigitalOffice.AuthService.Startup", LogLevel.Trace)
+                    .AddConsole();
+            });
+
+            _logger = loggerFactory.CreateLogger<Startup>();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
             services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
+
+            services.AddBusinessObjects(_logger);
 
             services
                 .AddHealthChecks()
@@ -143,8 +148,6 @@ namespace LT.DigitalOffice.AuthService
 
             ConfigureRabbitMq(services);
             ConfigureJwt(services);
-            ConfigureCommands(services);
-            ConfigureValidators(services);
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

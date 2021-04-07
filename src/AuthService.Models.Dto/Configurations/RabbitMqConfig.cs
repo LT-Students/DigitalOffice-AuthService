@@ -1,6 +1,6 @@
 ﻿using LT.DigitalOffice.Kernel.Configurations;
 
-namespace LT.DigitalOffice.AuthService.Configuration
+namespace LT.DigitalOffice.AuthService.Models.Dto.Configurations
 {
     public class RabbitMqConfig : BaseRabbitMqConfig
     {

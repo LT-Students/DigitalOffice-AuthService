@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.AuthService.Models.Dto.Requests;
 using LT.DigitalOffice.AuthService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Attributes;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.Commands.Interfaces
@@ -7,6 +8,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands.Interfaces
   /// <summary>
   /// Represents interface for a command in command pattern.
   /// </summary>
+  [AutoInject]
   public interface ILoginCommand
   {
     /// <summary>

@@ -1,7 +1,10 @@
-﻿using System;
+﻿using LT.DigitalOffice.AuthService.Models.Dto.Configurations;
+using LT.DigitalOffice.Kernel.Attributes;
+using System;
 
 namespace LT.DigitalOffice.Broker.Requests
 {
+    [AutoInjectRequest(nameof(RabbitMqConfig.GetTokenEndpoint))]
     public interface IGetTokenRequest
     {
         Guid UserId { get; }
