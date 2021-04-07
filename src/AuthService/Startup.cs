@@ -128,6 +128,8 @@ namespace LT.DigitalOffice.AuthService
             services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
             services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
 
+            services.AddHttpContextAccessor();
+
             services.AddBusinessObjects(_logger);
 
             services
