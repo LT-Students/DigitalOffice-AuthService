@@ -1,15 +1,9 @@
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
-using LT.DigitalOffice.AuthService.Business.Commands;
-using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
 using LT.DigitalOffice.AuthService.Models.Dto.Configurations;
 using LT.DigitalOffice.AuthService.Token;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
-using LT.DigitalOffice.AuthService.Validation;
-using LT.DigitalOffice.AuthService.Validation.Interfaces;
-using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Configurations;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using MassTransit;
@@ -94,10 +88,7 @@ namespace LT.DigitalOffice.AuthService
                 x.AddConsumer<CheckTokenConsumer>();
                 x.AddConsumer<GetTokenConsumer>();
 
-                x.AddRequestClients(
-                    _rabbitMqConfig,
-                    "LT.DigitalOffice.AuthService.Models.Broker",
-                    _logger);
+                x.AddRequestClients(_rabbitMqConfig, _logger);
             });
         }
 
