@@ -24,7 +24,6 @@ namespace LT.DigitalOffice.AuthService
     {
         private readonly BaseServiceInfoConfig _serviceInfoConfig;
         private readonly RabbitMqConfig _rabbitMqConfig;
-        private readonly ILogger<Startup> _logger;
 
         public IConfiguration Configuration { get; }
 
@@ -112,15 +111,6 @@ namespace LT.DigitalOffice.AuthService
             Description = "AuthService is an API intended to work with user authentication, create token for user.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
-
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                    .AddFilter("LT.DigitalOffice.AuthService.Startup", LogLevel.Trace)
-                    .AddConsole();
-            });
-
-            _logger = loggerFactory.CreateLogger<Startup>();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -130,7 +120,7 @@ namespace LT.DigitalOffice.AuthService
 
             services.AddHttpContextAccessor();
 
-            services.AddBusinessObjects(_logger);
+            services.AddBusinessObjects();
 
             services
                 .AddHealthChecks()
