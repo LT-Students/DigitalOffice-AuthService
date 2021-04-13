@@ -87,7 +87,7 @@ namespace LT.DigitalOffice.AuthService
                 x.AddConsumer<CheckTokenConsumer>();
                 x.AddConsumer<GetTokenConsumer>();
 
-                x.AddRequestClients(_rabbitMqConfig, _logger);
+                x.AddRequestClients(_rabbitMqConfig);
             });
         }
 
