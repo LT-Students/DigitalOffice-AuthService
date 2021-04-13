@@ -12,6 +12,11 @@ namespace LT.DigitalOffice.AuthService
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
+#if DEBUG
+                .AddJsonFile("appsettings.Development.json")
+#else
+                .AddJsonFile("appsettings.Production.json")
+#endif
                 .Build();
 
             Log.Logger = new LoggerConfiguration().ReadFrom

@@ -10,6 +10,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -120,6 +121,12 @@ namespace LT.DigitalOffice.AuthService
 
             services.AddHttpContextAccessor();
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             services.AddBusinessObjects();
 
             services
@@ -135,6 +142,7 @@ namespace LT.DigitalOffice.AuthService
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            app.UseForwardedHeaders();
 #if RELEASE
             app.UseHttpsRedirection();
 #endif
