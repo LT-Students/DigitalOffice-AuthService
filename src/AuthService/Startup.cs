@@ -116,11 +116,21 @@ namespace LT.DigitalOffice.AuthService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
-            services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder
+                        .WithOrigins("http://*.ltdo.xyz")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             services.AddHttpContextAccessor();
 
+            services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
+            services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
@@ -143,9 +153,7 @@ namespace LT.DigitalOffice.AuthService
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             app.UseForwardedHeaders();
-#if RELEASE
-            app.UseHttpsRedirection();
-#endif
+
             app.UseExceptionsHandler(loggerFactory);
 
             app.UseApiInformation();
@@ -154,12 +162,7 @@ namespace LT.DigitalOffice.AuthService
 
             string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
 
-            app.UseCors(
-                builder =>
-                    builder
-                        .WithOrigins(corsUrl)
-                        .AllowAnyHeader()
-                        .AllowAnyMethod());
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
