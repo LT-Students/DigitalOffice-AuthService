@@ -23,6 +23,8 @@ namespace LT.DigitalOffice.AuthService
 {
     public class Startup : BaseApiInfo
     {
+        private const string CorsPolicyName = "LtDoCorsPolicy";
+
         private readonly BaseServiceInfoConfig _serviceInfoConfig;
         private readonly RabbitMqConfig _rabbitMqConfig;
 
@@ -118,13 +120,15 @@ namespace LT.DigitalOffice.AuthService
         {
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder
-                        .WithOrigins("http://*.ltdo.xyz")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
+                options.AddPolicy(
+                    CorsPolicyName,
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins("http://*.ltdo.xyz")
+                            .AllowAnyHeader()
+                            .WithMethods("GET", "POST", "PUT", "OPTIONS", "DELETE","PATCH");
+                    });
             });
 
             services.AddHttpContextAccessor();
@@ -166,7 +170,7 @@ namespace LT.DigitalOffice.AuthService
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireCors(CorsPolicyName);
 
                 endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
                 {
