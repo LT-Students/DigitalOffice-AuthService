@@ -21,6 +21,7 @@ namespace LT.DigitalOffice.AuthService
 
             Log.Logger = new LoggerConfiguration().ReadFrom
                 .Configuration(configuration)
+                .Enrich.WithProperty("Service", "AuthService")
                 .CreateLogger();
 
             try
