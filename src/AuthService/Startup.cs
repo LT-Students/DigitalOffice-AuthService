@@ -110,7 +110,7 @@ namespace LT.DigitalOffice.AuthService
                 .GetSection(BaseRabbitMqConfig.SectionName)
                 .Get<RabbitMqConfig>();
 
-            Version = "1.2.3";
+            Version = "1.2.4";
             Description = "AuthService is an API intended to work with user authentication, create token for user.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
@@ -118,18 +118,18 @@ namespace LT.DigitalOffice.AuthService
 
         public void ConfigureServices(IServiceCollection services)
         {
-                services.AddCors(options =>
-                {
-                    options.AddPolicy(
-                        CorsPolicyName,
-                        builder =>
-                        {
-                            builder
-                                .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9818")
-                                .AllowAnyHeader()
-                                .WithMethods("POST");
-                        });
-                });
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    CorsPolicyName,
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9818")
+                            .AllowAnyHeader()
+                            .WithMethods("POST");
+                    });
+            });
 
             services.AddHttpContextAccessor();
 
