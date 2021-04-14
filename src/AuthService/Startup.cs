@@ -125,7 +125,12 @@ namespace LT.DigitalOffice.AuthService
                     builder =>
                     {
                         builder
-                            .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9818")
+                            .WithOrigins(
+                                "http://*.ltdo.xyz",
+                                "http://ltdo.xyz",
+                                "http://ltdo.xyz:9818",
+                                "http://localhost:4200",
+                                "http://localhost:4500")
                             .AllowAnyHeader()
                             .WithMethods("POST");
                     });
