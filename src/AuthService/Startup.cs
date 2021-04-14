@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.AuthService
 {
     public class Startup : BaseApiInfo
     {
-        private const string CorsPolicyName = "LtDoCorsPolicy";
+        public const string CorsPolicyName = "LtDoCorsPolicy";
 
         private readonly BaseServiceInfoConfig _serviceInfoConfig;
         private readonly RabbitMqConfig _rabbitMqConfig;
@@ -127,7 +127,7 @@ namespace LT.DigitalOffice.AuthService
                         builder
                             .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9818")
                             .AllowAnyHeader()
-                            .WithMethods("GET", "POST", "PUT", "OPTIONS", "DELETE","PATCH");
+                            .WithMethods("POST");
                     });
             });
 
@@ -166,7 +166,7 @@ namespace LT.DigitalOffice.AuthService
 
             string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
 
-            app.UseCors();
+            app.UseCors(CorsPolicyName);
 
             app.UseEndpoints(endpoints =>
             {
