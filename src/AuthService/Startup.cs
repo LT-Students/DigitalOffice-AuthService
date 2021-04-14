@@ -118,18 +118,18 @@ namespace LT.DigitalOffice.AuthService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    CorsPolicyName,
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9818")
-                            .AllowAnyHeader()
-                            .WithMethods("POST");
-                    });
-            });
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(
+                        CorsPolicyName,
+                        builder =>
+                        {
+                            builder
+                                .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9818")
+                                .AllowAnyHeader()
+                                .WithMethods("POST");
+                        });
+                });
 
             services.AddHttpContextAccessor();
 
@@ -163,8 +163,6 @@ namespace LT.DigitalOffice.AuthService
             app.UseApiInformation();
 
             app.UseRouting();
-
-            string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
 
             app.UseCors(CorsPolicyName);
 
