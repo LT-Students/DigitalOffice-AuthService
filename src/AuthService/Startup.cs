@@ -110,7 +110,7 @@ namespace LT.DigitalOffice.AuthService
                 .GetSection(BaseRabbitMqConfig.SectionName)
                 .Get<RabbitMqConfig>();
 
-            Version = "1.2.4";
+            Version = "1.2.5";
             Description = "AuthService is an API intended to work with user authentication, create token for user.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
