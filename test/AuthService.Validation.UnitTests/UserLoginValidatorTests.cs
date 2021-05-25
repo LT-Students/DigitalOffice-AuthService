@@ -32,11 +32,15 @@ namespace LT.DigitalOffice.AuthService.Validation.UnitTests
         [Test]
         public void BadLoginRequestTest()
         {
-            var request = new LoginRequest();
+            var request = new LoginRequest
+            {
+                LoginData = "login",
+                Password = " "
+            };
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
 
-            var result = validator.TestValidate(request);
-            result.ShouldHaveValidationErrorFor(x => x.LoginData);
-            result.ShouldHaveValidationErrorFor(x => x.Password);
+            request.LoginData = " ";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
         }
     }
 }
