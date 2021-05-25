@@ -23,10 +23,11 @@ namespace LT.DigitalOffice.AuthService.Validation.UnitTests
                 LoginData = "admin",
                 Password = "admin"
             };
+            validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
 
-            var result = validator.TestValidate(request);
-
-            result.ShouldNotHaveAnyValidationErrors();
+            request.LoginData = " admin ";
+            request.Password = " admin ";
+            validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
         }
 
         [Test]
@@ -34,12 +35,21 @@ namespace LT.DigitalOffice.AuthService.Validation.UnitTests
         {
             var request = new LoginRequest
             {
-                LoginData = "login",
-                Password = " "
+                LoginData = "Login",
+                Password = ""
             };
             validator.TestValidate(request).ShouldHaveAnyValidationError();
 
+            request.Password = " ";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
+
             request.LoginData = " ";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
+
+            request.LoginData = "";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
+
+            request.Password = "Password";
             validator.TestValidate(request).ShouldHaveAnyValidationError();
         }
     }
