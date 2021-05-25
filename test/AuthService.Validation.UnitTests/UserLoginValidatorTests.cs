@@ -23,20 +23,34 @@ namespace LT.DigitalOffice.AuthService.Validation.UnitTests
                 LoginData = "admin",
                 Password = "admin"
             };
+            validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
 
-            var result = validator.TestValidate(request);
-
-            result.ShouldNotHaveAnyValidationErrors();
+            request.LoginData = " admin ";
+            request.Password = " admin ";
+            validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
         }
 
         [Test]
         public void BadLoginRequestTest()
         {
-            var request = new LoginRequest();
+            var request = new LoginRequest
+            {
+                LoginData = "Login",
+                Password = ""
+            };
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
 
-            var result = validator.TestValidate(request);
-            result.ShouldHaveValidationErrorFor(x => x.LoginData);
-            result.ShouldHaveValidationErrorFor(x => x.Password);
+            request.Password = " ";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
+
+            request.LoginData = " ";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
+
+            request.LoginData = "";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
+
+            request.Password = "Password";
+            validator.TestValidate(request).ShouldHaveAnyValidationError();
         }
     }
 }

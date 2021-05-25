@@ -21,4 +21,8 @@
     <ProjectReference Include="..\AuthService.Validation\AuthService.Validation.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="LT.DigitalOffice.Kernel" Version="1.1.26" />
+  </ItemGroup>
+
 </Project>
