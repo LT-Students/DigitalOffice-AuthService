@@ -4,11 +4,11 @@ using LT.DigitalOffice.AuthService.Models.Dto.Requests;
 using LT.DigitalOffice.AuthService.Models.Dto.Responses;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.Models.Broker.Requests.User;
+using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -21,14 +21,14 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
     {
         private readonly ITokenEngine _tokenEngine;
         private readonly ILoginValidator _validator;
-        private readonly IRequestClient<IUserCredentialsRequest> _requestClient;
+        private readonly IRequestClient<IGetUserCredentialsRequest> _requestClient;
         private readonly ILogger<LoginCommand> _logger;
         private readonly HttpContext _httpContext;
 
         public LoginCommand(
             ITokenEngine tokenEngine,
             ILoginValidator validator,
-            IRequestClient<IUserCredentialsRequest> requestClient,
+            IRequestClient<IGetUserCredentialsRequest> requestClient,
             IHttpContextAccessor httpContextAccessor,
             ILogger<LoginCommand> logger)
         {
@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
             _validator.ValidateAndThrowCustom(request);
 
-            IUserCredentialsResponse userCredentials = await GetUserCredentials(request.LoginData);
+            IGetUserCredentialsResponse userCredentials = await GetUserCredentials(request.LoginData);
 
             if (userCredentials == null)
             {
@@ -72,14 +72,14 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             return result;
         }
 
-        private async Task<IUserCredentialsResponse> GetUserCredentials(string loginData)
+        private async Task<IGetUserCredentialsResponse> GetUserCredentials(string loginData)
         {
-            IUserCredentialsResponse result = null;
+            IGetUserCredentialsResponse result = null;
 
             try
             {
-                var brokerResponse = await _requestClient.GetResponse<IOperationResult<IUserCredentialsResponse>>(
-                    IUserCredentialsRequest.CreateObj(loginData));
+                var brokerResponse = await _requestClient.GetResponse<IOperationResult<IGetUserCredentialsResponse>>(
+                    IGetUserCredentialsRequest.CreateObj(loginData));
 
                 if (!brokerResponse.Message.IsSuccess)
                 {
@@ -101,7 +101,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             return result;
         }
 
-        private void VerifyPasswordHash(IUserCredentialsResponse savedUserCredentials, string requestPassword)
+        private void VerifyPasswordHash(IGetUserCredentialsResponse savedUserCredentials, string requestPassword)
         {
             string requestPasswordHash = PasswordHelper.GetPasswordHash(
                 savedUserCredentials.UserLogin,
