@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
-using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Model.Broker.Requests.Token;
+using LT.DigitalOffice.Models.Broker.Requests.Token;
 using MassTransit;
 using System.Threading.Tasks;
 
