@@ -1,17 +1,13 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using LT.DigitalOffice.AuthService.Business.Commands;
 using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
 using LT.DigitalOffice.AuthService.Business.Helpers;
 using LT.DigitalOffice.AuthService.Models.Dto.Requests;
-using LT.DigitalOffice.AuthService.Models.Dto.Responses;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
-using LT.DigitalOffice.UnitTestKernel;
+using LT.DigitalOffice.Models.Broker.Requests.User;
+using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
 using Moq;
 using Moq.AutoMock;
@@ -22,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.UnitTests
 {
-    public class UserCredentialsResponse : IUserCredentialsResponse
+    public class UserCredentialsResponse : IGetUserCredentialsResponse
     {
         public Guid UserId { get; set; }
         public string PasswordHash { get; set; }
@@ -36,9 +32,9 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
         private Mock<ITokenEngine> tokenEngineMock;
         private Mock<ILoginValidator> loginValidatorMock;
         private Mock<ValidationResult> validationResultIsValidMock;
-        private Mock<IRequestClient<IUserCredentialsRequest>> requestBrokerMock;
-        private Mock<IOperationResult<IUserCredentialsResponse>> operationResultMock;
-        private Mock<IUserCredentialsResponse> brokerResponseMock;
+        private Mock<IRequestClient<IGetUserCredentialsRequest>> requestBrokerMock;
+        private Mock<IOperationResult<IGetUserCredentialsResponse>> operationResultMock;
+        private Mock<IGetUserCredentialsResponse> brokerResponseMock;
 
         private string salt;
         private AutoMocker autoMocker;
@@ -90,22 +86,22 @@ namespace LT.DigitalOffice.AuthService.Business.UnitTests
                 salt,
                 newUserCredentials.Password);
 
-            var responseBrokerMock = new Mock<Response<IOperationResult<IUserCredentialsResponse>>>();
-            requestBrokerMock = new Mock<IRequestClient<IUserCredentialsRequest>>();
+            var responseBrokerMock = new Mock<Response<IOperationResult<IGetUserCredentialsResponse>>>();
+            requestBrokerMock = new Mock<IRequestClient<IGetUserCredentialsRequest>>();
 
-            brokerResponseMock = new Mock<IUserCredentialsResponse>();
+            brokerResponseMock = new Mock<IGetUserCredentialsResponse>();
             brokerResponseMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
             brokerResponseMock.Setup(x => x.PasswordHash).Returns(passwordHash);
             brokerResponseMock.Setup(x => x.Salt).Returns(salt);
             brokerResponseMock.Setup(x => x.UserLogin).Returns(newUserCredentials.LoginData);
 
-            operationResultMock = new Mock<IOperationResult<IUserCredentialsResponse>>();
+            operationResultMock = new Mock<IOperationResult<IGetUserCredentialsResponse>>();
             operationResultMock.Setup(x => x.Body).Returns(brokerResponseMock.Object);
             operationResultMock.Setup(x => x.IsSuccess).Returns(true);
             operationResultMock.Setup(x => x.Errors).Returns(new List<string>());
 
             requestBrokerMock.Setup(
-                x => x.GetResponse<IOperationResult<IUserCredentialsResponse>>(
+                x => x.GetResponse<IOperationResult<IGetUserCredentialsResponse>>(
                     It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(responseBrokerMock.Object));
 
