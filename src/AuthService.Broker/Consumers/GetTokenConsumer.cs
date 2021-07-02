@@ -20,10 +20,10 @@ namespace LT.DigitalOffice.AuthService.Broker.Consumers
         {
             var response = OperationResultWrapper.CreateResponse(GetTokenResult, context.Message);
 
-            await context.RespondAsync<IOperationResult<(string, string)>>(response);
+            await context.RespondAsync<IOperationResult<(string accessToken, string refreshToken)>>(response);
         }
 
-        private (string, string) GetTokenResult(IGetTokenRequest request)
+        private (string accessToken, string refreshToken) GetTokenResult(IGetTokenRequest request)
         {
             return (
                 _tokenEngine.Create(request.UserId, TokenType.Access),

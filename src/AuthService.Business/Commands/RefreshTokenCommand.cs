@@ -47,7 +47,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             };
             
             _logger.LogInformation(
-                "User was successfully refreshed token with UserId: '{userId}' from IP: {requestIP}",
+                "User '{userId}' has successfully refreshed access token from IP '{userIP}'",
                 userId,
                 _httpContext.Connection.RemoteIpAddress);
 

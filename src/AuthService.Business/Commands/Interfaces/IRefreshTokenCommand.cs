@@ -7,6 +7,6 @@ namespace LT.DigitalOffice.AuthService.Business.Commands.Interfaces
     [AutoInject]
     public interface IRefreshTokenCommand
     {
-        public LoginResult Execute(RefreshRequest request);
+        LoginResult Execute(RefreshRequest request);
     }
 }
