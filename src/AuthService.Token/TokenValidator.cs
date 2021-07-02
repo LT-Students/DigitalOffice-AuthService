@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Token
 {
@@ -29,7 +30,7 @@ namespace LT.DigitalOffice.AuthService.Token
         }
 
         /// <inheritdoc/>
-        public Guid Validate(string token)
+        public Guid Validate(string token, TokenType tokenType)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -51,7 +52,10 @@ namespace LT.DigitalOffice.AuthService.Token
 
                 ClaimsPrincipal claims = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
                 var userIdClaimValue = claims.FindFirst("UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaimValue) || !Guid.TryParse(userIdClaimValue, out Guid userId))
+                var tokenTypeClaimValue = claims.FindFirst("TokenType")?.Value;
+                if (string.IsNullOrEmpty(userIdClaimValue) ||
+                    !Guid.TryParse(userIdClaimValue, out Guid userId) ||
+                    tokenType.ToString() != tokenTypeClaimValue)
                 {
                     throw new SecurityTokenValidationException("Bad token format.");
                 }

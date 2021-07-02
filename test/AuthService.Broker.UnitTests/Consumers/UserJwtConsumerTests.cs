@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Broker.UnitTests.Consumers
 {
@@ -70,7 +71,7 @@ namespace LT.DigitalOffice.AuthService.Broker.UnitTests.Consumers
             Guid expectedBody = Guid.Empty;
 
             jwtValidationMock
-                .Setup(x => x.Validate(It.IsAny<string>()))
+                .Setup(x => x.Validate(It.IsAny<string>(), It.IsAny<TokenType>()))
                 .Throws(new Exception("Token failed validation"));
 
             await harness.Start();

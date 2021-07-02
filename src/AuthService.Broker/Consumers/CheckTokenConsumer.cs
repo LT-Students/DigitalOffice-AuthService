@@ -4,6 +4,7 @@ using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
 using System;
 using System.Threading.Tasks;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Broker.Consumers
 {
@@ -25,7 +26,7 @@ namespace LT.DigitalOffice.AuthService.Broker.Consumers
 
         private Guid GetValidationResult(ICheckTokenRequest request)
         {
-            return _tokenValidator.Validate(request.Token);
+            return _tokenValidator.Validate(request.Token, TokenType.Access);
         }
     }
 }

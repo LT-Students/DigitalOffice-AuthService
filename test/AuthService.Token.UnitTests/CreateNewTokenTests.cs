@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Text;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Token.UnitTests
 {
@@ -25,7 +26,8 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
             {
                 TokenAudience = "AuthClient",
                 TokenIssuer = "AuthClient",
-                TokenLifetimeInMinutes = 5
+                AccessTokenLifetimeInMinutes = 5,
+                RefreshTokenLifetimeInMinutes = 10
             });
 
             expectedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
@@ -46,7 +48,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
                 .SetupGet(x => x.SigningAlgorithm)
                 .Returns(signingAlgorithm);
 
-            var newJwt = tokenEngine.Create(Guid.NewGuid());
+            var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access);
 
             Assert.IsNotEmpty(newJwt);
         }

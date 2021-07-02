@@ -1,4 +1,5 @@
 ﻿using System;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Token.Interfaces
 {
@@ -7,6 +8,6 @@ namespace LT.DigitalOffice.AuthService.Token.Interfaces
         /// <summary>
         /// Create new token based on user login.
         /// </summary>
-        string Create(Guid userId);
+        string Create(Guid userId, TokenType tokenType);
     }
 }

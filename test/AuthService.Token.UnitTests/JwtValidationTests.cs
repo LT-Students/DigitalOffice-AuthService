@@ -9,6 +9,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Token.UnitTests
 {
@@ -46,7 +47,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
             CreateToken();
 
             Assert.Throws<ForbiddenException>(
-                () => _jwtValidation.Validate(_userJwt),
+                () => _jwtValidation.Validate(_userJwt, TokenType.Access),
                 "Token failed validation.");
         }
 
@@ -56,7 +57,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
             _userJwt = "Example_userJwt";
 
             Assert.Throws<BadRequestException>(
-                () => _jwtValidation.Validate(_userJwt),
+                () => _jwtValidation.Validate(_userJwt, TokenType.Access),
                 "Token was wrong format.");
         }
 
@@ -67,7 +68,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
 
             CreateToken();
 
-            _jwtValidation.Validate(_userJwt);
+            _jwtValidation.Validate(_userJwt, TokenType.Access);
         }
 
         private void CreateToken()
@@ -76,7 +77,8 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
 
             var claims = new []
             {
-                new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString())
+                new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString()),
+                new Claim(TokenEngine.ClaimTokenType, TokenType.Access.ToString())
             };
 
             var jwt = new JwtSecurityToken(
