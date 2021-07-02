@@ -4,7 +4,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AuthService.Broker\AuthService.Broker.csproj" />
-    <ProjectReference Include="..\..\src\AuthService.Token\AuthService.Token.csproj" />
   </ItemGroup>
 
 </Project>

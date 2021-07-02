@@ -1,8 +1,8 @@
 ﻿using LT.DigitalOffice.AuthService.Business.Commands.Interfaces;
 using LT.DigitalOffice.AuthService.Business.Helpers;
+using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Models.Dto.Requests;
 using LT.DigitalOffice.AuthService.Models.Dto.Responses;
-using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions.Models;

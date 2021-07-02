@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.AuthService.Broker.Consumers;
-using LT.DigitalOffice.AuthService.Token.Interfaces;
+using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit.Testing;

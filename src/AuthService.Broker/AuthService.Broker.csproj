@@ -3,6 +3,6 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-    <ProjectReference Include="..\AuthService.Token\AuthService.Token.csproj" />
+    <ProjectReference Include="..\AuthService.Business\AuthService.Business.csproj" />
   </ItemGroup>
 </Project>

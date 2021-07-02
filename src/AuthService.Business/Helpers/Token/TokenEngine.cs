@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
+﻿using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -7,7 +7,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace LT.DigitalOffice.AuthService.Token
+namespace LT.DigitalOffice.AuthService.Business.Helpers.Token
 {
     public class TokenEngine : ITokenEngine
     {

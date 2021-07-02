@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
+﻿using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Broker.Consumers
 {
-  public class CheckTokenConsumer : IConsumer<ICheckTokenRequest>
+    public class CheckTokenConsumer : IConsumer<ICheckTokenRequest>
     {
         private readonly ITokenValidator _tokenValidator;
 

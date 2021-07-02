@@ -1,8 +1,8 @@
-﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
+﻿using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace LT.DigitalOffice.AuthService.Token
+namespace LT.DigitalOffice.AuthService.Business.Helpers.Token
 {
     public class SigningSymmetricKey : IJwtSigningEncodingKey, IJwtSigningDecodingKey
     {

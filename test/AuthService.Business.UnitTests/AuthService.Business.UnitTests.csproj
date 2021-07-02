@@ -5,7 +5,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AuthService.Business\AuthService.Business.csproj" />
     <ProjectReference Include="..\..\src\AuthService.Models.Dto\AuthService.Models.Dto.csproj" />
-    <ProjectReference Include="..\..\src\AuthService.Token\AuthService.Token.csproj" />
   </ItemGroup>
 
 </Project>

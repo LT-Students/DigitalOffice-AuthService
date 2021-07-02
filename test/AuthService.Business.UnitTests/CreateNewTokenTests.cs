@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
+﻿using LT.DigitalOffice.AuthService.Business.Helpers.Token;
+using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;

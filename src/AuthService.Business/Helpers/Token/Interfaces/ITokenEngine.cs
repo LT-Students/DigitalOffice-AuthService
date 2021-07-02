@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.AuthService.Token.Interfaces
+namespace LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces
 {
     public interface ITokenEngine
     {

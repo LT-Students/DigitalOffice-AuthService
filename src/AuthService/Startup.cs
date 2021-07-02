@@ -1,8 +1,8 @@
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.AuthService.Broker.Consumers;
+using LT.DigitalOffice.AuthService.Business.Helpers.Token;
+using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Models.Dto.Configurations;
-using LT.DigitalOffice.AuthService.Token;
-using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;

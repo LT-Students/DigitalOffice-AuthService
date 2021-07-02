@@ -1,4 +1,4 @@
-﻿namespace LT.DigitalOffice.AuthService.Token
+﻿namespace LT.DigitalOffice.AuthService.Business.Helpers.Token
 {
     /// <summary>
     /// Token configuration class filled in Startup.cs.

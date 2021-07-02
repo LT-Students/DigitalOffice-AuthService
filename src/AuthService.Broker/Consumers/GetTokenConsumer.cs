@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
+﻿using LT.DigitalOffice.AuthService.Business.Helpers.Token.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Models.Broker.Requests.Token;
 using MassTransit;
