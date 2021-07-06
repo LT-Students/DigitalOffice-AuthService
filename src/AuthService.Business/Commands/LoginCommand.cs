@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Business.Commands
 {
@@ -61,7 +62,8 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             var result = new LoginResult
             {
                 UserId = userCredentials.UserId,
-                Token = _tokenEngine.Create(userCredentials.UserId)
+                AccessToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Access),
+                RefreshToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Refresh)
             };
 
             _logger.LogInformation(

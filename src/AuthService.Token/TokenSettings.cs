@@ -5,7 +5,8 @@
     /// </summary>
     public class TokenSettings
     {
-        public double TokenLifetimeInMinutes { get; set; }
+        public double AccessTokenLifetimeInMinutes { get; set; }
+        public double RefreshTokenLifetimeInMinutes { get; set; }
         public string TokenIssuer { get; set; }
         public string TokenAudience { get; set; }
     }

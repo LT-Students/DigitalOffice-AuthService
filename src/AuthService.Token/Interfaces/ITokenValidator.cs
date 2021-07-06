@@ -1,4 +1,5 @@
 ﻿using System;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Token.Interfaces
 {
@@ -11,6 +12,7 @@ namespace LT.DigitalOffice.AuthService.Token.Interfaces
         /// Validate user token.
         /// </summary>
         /// <param name="token">User token.</param>
-        Guid Validate(string token);
+        /// <param name="tokenType">Is access or refresh token</param>
+        Guid Validate(string token, TokenType tokenType);
     }
 }

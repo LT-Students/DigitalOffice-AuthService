@@ -17,5 +17,13 @@ namespace LT.DigitalOffice.AuthService.Controllers
         {
             return await command.Execute(userCredentials);
         }
+
+        [HttpPost("refresh")]
+        public LoginResult RefreshToken(
+            [FromServices] IRefreshTokenCommand command,
+            [FromBody] RefreshRequest refreshToken)
+        {
+            return command.Execute(refreshToken);
+        }
     }
 }

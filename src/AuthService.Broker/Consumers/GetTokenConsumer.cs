@@ -3,6 +3,7 @@ using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Models.Broker.Requests.Token;
 using MassTransit;
 using System.Threading.Tasks;
+using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 
 namespace LT.DigitalOffice.AuthService.Broker.Consumers
 {
@@ -19,12 +20,15 @@ namespace LT.DigitalOffice.AuthService.Broker.Consumers
         {
             var response = OperationResultWrapper.CreateResponse(GetTokenResult, context.Message);
 
-            await context.RespondAsync<IOperationResult<string>>(response);
+            await context.RespondAsync<IOperationResult<(string accessToken, string refreshToken)>>(response);
         }
 
-        private string GetTokenResult(IGetTokenRequest request)
+        private (string accessToken, string refreshToken) GetTokenResult(IGetTokenRequest request)
         {
-            return _tokenEngine.Create(request.UserId);
+            return (
+                _tokenEngine.Create(request.UserId, TokenType.Access),
+                _tokenEngine.Create(request.UserId, TokenType.Refresh)
+            );
         }
     }
 }
