@@ -11,6 +11,6 @@ namespace LT.DigitalOffice.AuthService.Token.Interfaces
         /// <param name="userId">Specified user ID</param>
         /// <param name="tokenType">Token type (Access, Refresh)</param>
         /// <returns>Token based on userId</returns>
-        string Create(Guid userId, TokenType tokenType);
+        string Create(Guid userId, TokenType tokenType, out double tokenLifeTime);
     }
 }

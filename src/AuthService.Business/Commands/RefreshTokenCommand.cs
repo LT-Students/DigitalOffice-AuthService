@@ -42,10 +42,11 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             var result = new LoginResult
             {
                 UserId = userId,
-                AccessToken = _tokenEngine.Create(userId, TokenType.Access),
-                RefreshToken = _tokenEngine.Create(userId, TokenType.Refresh)
+                AccessToken = _tokenEngine.Create(userId, TokenType.Access, out double tokenLifeTime),
+                RefreshToken = _tokenEngine.Create(userId, TokenType.Refresh, out _),
+                TokenLifeTime = tokenLifeTime
             };
-            
+
             _logger.LogInformation(
                 "User '{userId}' has successfully refreshed access token from IP '{userIP}'",
                 userId,
