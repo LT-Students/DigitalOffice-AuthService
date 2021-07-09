@@ -12,16 +12,26 @@ namespace LT.DigitalOffice.AuthService
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-#if DEBUG
-                .AddJsonFile("appsettings.Development.json")
-#else
-                .AddJsonFile("appsettings.Production.json")
-#endif
                 .Build();
+
+            string seqServerUrl = Environment.GetEnvironmentVariable("SeqServerUrl");
+            if (string.IsNullOrEmpty(seqServerUrl))
+            {
+                seqServerUrl = configuration.GetSection("Serilog:WriteTo:Seq")["Args:serverUrl"];
+            }
+
+            string seqApiKey = Environment.GetEnvironmentVariable("seqApiKey");
+            if (string.IsNullOrEmpty(seqApiKey))
+            {
+                seqServerUrl = configuration.GetSection("Serilog:WriteTo:Seq")["Args:apiKey"];
+            }
 
             Log.Logger = new LoggerConfiguration().ReadFrom
                 .Configuration(configuration)
                 .Enrich.WithProperty("Service", "AuthService")
+                .WriteTo.Seq(
+                    serverUrl: seqServerUrl,
+                    apiKey: seqApiKey)
                 .CreateLogger();
 
             try
