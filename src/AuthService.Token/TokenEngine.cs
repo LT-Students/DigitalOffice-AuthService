@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.AuthService.Token
                 audience: _tokenOptions.Value.TokenAudience,
                 notBefore: DateTime.UtcNow,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(tokenExpiresIn),
+                expires: DateTime.UtcNow.AddMinutes(tokenExpiresIn),
                 signingCredentials: new SigningCredentials(
                     _signingEncodingKey.GetKey(),
                     _signingEncodingKey.SigningAlgorithm));
