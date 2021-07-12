@@ -62,9 +62,10 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
             var result = new LoginResult
             {
                 UserId = userCredentials.UserId,
-                AccessToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Access, out double tokenLifeTime),
-                RefreshToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Refresh, out _),
-                TokenLifeTime = tokenLifeTime
+                AccessToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Access, out double accessTokenLifeTime),
+                RefreshToken = _tokenEngine.Create(userCredentials.UserId, TokenType.Refresh, out double refreshTokenLifeTime),
+                AccessTokenLifeTime = accessTokenLifeTime,
+                RefreshTokenLifeTime = refreshTokenLifeTime
             };
 
             _logger.LogInformation(

@@ -7,6 +7,7 @@ namespace LT.DigitalOffice.AuthService.Models.Dto.Responses
         public Guid UserId { get; init; }
         public string AccessToken { get; init; }
         public string RefreshToken { get; init; }
-        public double TokenLifeTime { get; init; }
+        public double AccessTokenLifeTime { get; init; }
+        public double RefreshTokenLifeTime { get; init; }
     }
 }

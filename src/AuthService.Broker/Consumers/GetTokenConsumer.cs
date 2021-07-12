@@ -27,9 +27,10 @@ namespace LT.DigitalOffice.AuthService.Broker.Consumers
         private object GetTokenResult(IGetTokenRequest request)
         {
             return IGetTokenResponse.CreateObj(
-                _tokenEngine.Create(request.UserId, TokenType.Access, out double tokenLifeTime),
-                _tokenEngine.Create(request.UserId, TokenType.Refresh, out _),
-                tokenLifeTime);
+                _tokenEngine.Create(request.UserId, TokenType.Access, out double accessTokenLifeTime),
+                _tokenEngine.Create(request.UserId, TokenType.Refresh, out double refreshTokenLifeTime),
+                accessTokenLifeTime,
+                refreshTokenLifeTime);
         }
     }
 }
