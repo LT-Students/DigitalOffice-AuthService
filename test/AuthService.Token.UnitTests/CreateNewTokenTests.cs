@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
         public void SuccessfulCreateNewToken()
         {
             string signingAlgorithm = "HS256";
-            double tokenLifeTime;
+            double tokenExpiresIn;
 
             signingEncodingKey
                 .Setup(x => x.GetKey())
@@ -50,10 +50,10 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
                 .SetupGet(x => x.SigningAlgorithm)
                 .Returns(signingAlgorithm);
 
-            var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access, out tokenLifeTime);
+            var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access, out tokenExpiresIn);
 
             Assert.IsNotEmpty(newJwt);
-            Assert.AreEqual(tokenOptions.Value.AccessTokenLifetimeInMinutes, tokenLifeTime);
+            Assert.AreEqual(tokenOptions.Value.AccessTokenLifetimeInMinutes, tokenExpiresIn);
         }
     }
 }
