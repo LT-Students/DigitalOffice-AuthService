@@ -17,13 +17,13 @@ namespace LT.DigitalOffice.AuthService
             string seqServerUrl = Environment.GetEnvironmentVariable("SeqServerUrl");
             if (string.IsNullOrEmpty(seqServerUrl))
             {
-                seqServerUrl = configuration.GetSection("Serilog:WriteTo:Seq")["Args:serverUrl"];
+                seqServerUrl = configuration["Serilog:WriteTo:1:Args:serverUrl"];
             }
 
             string seqApiKey = Environment.GetEnvironmentVariable("seqApiKey");
             if (string.IsNullOrEmpty(seqApiKey))
             {
-                seqApiKey = configuration.GetSection("Serilog:WriteTo:Seq")["Args:apiKey"];
+                seqApiKey = configuration["Serilog:WriteTo:1:Args:apiKey"];
             }
 
             Log.Logger = new LoggerConfiguration().ReadFrom
