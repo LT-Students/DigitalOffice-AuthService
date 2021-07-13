@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.AuthService
             string seqApiKey = Environment.GetEnvironmentVariable("seqApiKey");
             if (string.IsNullOrEmpty(seqApiKey))
             {
-                seqServerUrl = configuration.GetSection("Serilog:WriteTo:Seq")["Args:apiKey"];
+                seqApiKey = configuration.GetSection("Serilog:WriteTo:Seq")["Args:apiKey"];
             }
 
             Log.Logger = new LoggerConfiguration().ReadFrom
