@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.AuthService.Token
         }
 
         /// <inheritdoc />
-        public string Create(Guid userId, TokenType tokenType)
+        public string Create(Guid userId, TokenType tokenType, out double tokenExpiresIn)
         {
             if (userId == Guid.Empty)
             {
@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.AuthService.Token
                 new Claim(ClaimTokenType, tokenType.ToString())
             };
 
-            double tokenLifetime = tokenType == TokenType.Access
+            tokenExpiresIn = tokenType == TokenType.Access
                 ? _tokenOptions.Value.AccessTokenLifetimeInMinutes
                 : _tokenOptions.Value.RefreshTokenLifetimeInMinutes;
 
@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.AuthService.Token
                 audience: _tokenOptions.Value.TokenAudience,
                 notBefore: DateTime.UtcNow,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(tokenLifetime),
+                expires: DateTime.Now.AddMinutes(tokenExpiresIn),
                 signingCredentials: new SigningCredentials(
                     _signingEncodingKey.GetKey(),
                     _signingEncodingKey.SigningAlgorithm));

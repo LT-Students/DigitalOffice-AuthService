@@ -13,7 +13,8 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
     {
         private Mock<IJwtSigningEncodingKey> signingEncodingKey;
         private SymmetricSecurityKey expectedKey;
-        private TokenEngine tokenEngine;
+        private ITokenEngine tokenEngine;
+        private IOptions<TokenSettings> tokenOptions;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -22,7 +23,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
 
             signingEncodingKey = new Mock<IJwtSigningEncodingKey>();
 
-            var tokenOptions = Options.Create(new TokenSettings
+            tokenOptions = Options.Create(new TokenSettings
             {
                 TokenAudience = "AuthClient",
                 TokenIssuer = "AuthClient",
@@ -39,6 +40,7 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
         public void SuccessfulCreateNewToken()
         {
             string signingAlgorithm = "HS256";
+            double tokenExpiresIn;
 
             signingEncodingKey
                 .Setup(x => x.GetKey())
@@ -48,9 +50,10 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
                 .SetupGet(x => x.SigningAlgorithm)
                 .Returns(signingAlgorithm);
 
-            var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access);
+            var newJwt = tokenEngine.Create(Guid.NewGuid(), TokenType.Access, out tokenExpiresIn);
 
             Assert.IsNotEmpty(newJwt);
+            Assert.AreEqual(tokenOptions.Value.AccessTokenLifetimeInMinutes, tokenExpiresIn);
         }
     }
 }
