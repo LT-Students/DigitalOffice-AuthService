@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuthService.Broker\AuthService.Broker.csproj" />
+    <ProjectReference Include="..\AuthService.Models.Dto\AuthService.Models.Dto.csproj" />
+    <ProjectReference Include="..\AuthService.Token\AuthService.Token.csproj" />
+    <ProjectReference Include="..\AuthService.Validation\AuthService.Validation.csproj" />
+  </ItemGroup>
+
+</Project>
