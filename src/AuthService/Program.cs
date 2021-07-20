@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.AuthService
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            string seqServerUrl = Environment.GetEnvironmentVariable("SeqServerUrl");
+            string seqServerUrl = Environment.GetEnvironmentVariable("seqServerUrl");
             if (string.IsNullOrEmpty(seqServerUrl))
             {
                 seqServerUrl = configuration["Serilog:WriteTo:1:Args:serverUrl"];
