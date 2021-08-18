@@ -42,6 +42,8 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
 
         public async Task<LoginResult> Execute(LoginRequest request)
         {
+            request.LoginData = request.LoginData.Trim();
+
             _logger.LogInformation(
                 "User login request for LoginData: '{loginData}' from IP: '{requestIP}'.",
                 request.LoginData,
