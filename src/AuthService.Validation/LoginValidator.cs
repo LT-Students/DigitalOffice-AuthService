@@ -8,11 +8,11 @@ namespace LT.DigitalOffice.AuthService.Validation
     {
         public LoginValidator()
         {
-            RuleFor(user => user.LoginData.Trim())
+            RuleFor(user => user.LoginData)
                 .NotEmpty()
                 .WithMessage("Login data must not be empty.");
 
-            RuleFor(user => user.Password.Trim())
+            RuleFor(user => user.Password)
                 .NotEmpty()
                 .WithMessage("Password must not be empty.");
         }

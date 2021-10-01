@@ -30,6 +30,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{B9B3E453-FB72-473C-802E-F1075A8D9A20}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		Common.Configurations.targets = Common.Configurations.targets
 		Dockerfile = Dockerfile
