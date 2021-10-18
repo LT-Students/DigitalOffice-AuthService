@@ -67,45 +67,28 @@ namespace LT.DigitalOffice.AuthService
 
     private (string username, string password) GetRabbitMqCredentials()
     {
-      string username = Environment.GetEnvironmentVariable("RabbitMqUsername");
-      if (string.IsNullOrEmpty(username))
+      static string GetString(string envVar, string formAppsettings, string generated, string fieldName)
       {
-        username = _rabbitMqConfig.Username ?? $"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}";
-
-        if (_rabbitMqConfig.Username == null)
+        string str = Environment.GetEnvironmentVariable(envVar);
+        if (string.IsNullOrEmpty(str))
         {
-          Log.Information($"Default RabbitMq username was used. Value '{username}'.");
+          str = formAppsettings ?? generated;
+
+          Log.Information(
+            formAppsettings == null
+              ? $"Default RabbitMq {fieldName} was used."
+              : $"RabbitMq {fieldName} from appsetings.json was used.");
         }
         else
         {
-          Log.Information($"RabbitMq username from appsetings.json was used. Value '{username}'.");
+          Log.Information($"RabbitMq {fieldName} from environment was used.");
         }
-      }
-      else
-      {
-        Log.Information($"RabbitMq username from environment was used. Value '{username}'.");
+
+        return str;
       }
 
-      string password = Environment.GetEnvironmentVariable("RabbitMqPassword");
-      if (string.IsNullOrEmpty(password))
-      {
-        password = _rabbitMqConfig.Password ?? _serviceInfoConfig.Id;
-
-        if (_rabbitMqConfig.Password == null)
-        {
-          Log.Information($"Default RabbitMq password was used.");
-        }
-        else
-        {
-          Log.Information($"RabbitMq password from appsetings.json was used.");
-        }
-      }
-      else
-      {
-        Log.Information($"RabbitMq password from environment was used.");
-      }
-
-      return (username, password);
+      return (GetString("RabbitMqUsername", _rabbitMqConfig.Username, $"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}", "Username"),
+        GetString("RabbitMqPassword", _rabbitMqConfig.Password, _serviceInfoConfig.Id, "Password"));
     }
 
     private void ConfigureRabbitMq(IServiceCollection services)
