@@ -2,10 +2,10 @@
   "profiles": {
     "AuthService": {
       "commandName": "Project",
-      "externalUrlConfiguration": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "externalUrlConfiguration": true
     }
   }
 }
