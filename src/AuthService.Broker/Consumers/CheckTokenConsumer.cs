@@ -1,10 +1,10 @@
-﻿using LT.DigitalOffice.AuthService.Token.Interfaces;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel.Broker;
-using MassTransit;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using LT.DigitalOffice.AuthService.Models.Dto.Enums;
+using LT.DigitalOffice.AuthService.Token.Interfaces;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
+using MassTransit;
 
 namespace LT.DigitalOffice.AuthService.Broker.Consumers
 {
