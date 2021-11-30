@@ -5,6 +5,8 @@ using LT.DigitalOffice.AuthService.Broker.Consumers;
 using LT.DigitalOffice.AuthService.Models.Dto.Configurations;
 using LT.DigitalOffice.AuthService.Token;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
+using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
+using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
@@ -164,8 +166,8 @@ namespace LT.DigitalOffice.AuthService
               //    "http://localhost:4500")
               .AllowAnyHeader()
               .AllowAnyMethod();
-              //.WithMethods("POST");
-            });
+            //.WithMethods("POST");
+          });
       });
 
       services.AddHttpContextAccessor();
