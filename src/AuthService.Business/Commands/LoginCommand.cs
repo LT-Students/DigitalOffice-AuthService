@@ -27,11 +27,11 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
     private readonly HttpContext _httpContext;
 
     public LoginCommand(
-        ITokenEngine tokenEngine,
-        ILoginValidator validator,
-        IRequestClient<IGetUserCredentialsRequest> requestClient,
-        IHttpContextAccessor httpContextAccessor,
-        ILogger<LoginCommand> logger)
+      ITokenEngine tokenEngine,
+      ILoginValidator validator,
+      IRequestClient<IGetUserCredentialsRequest> requestClient,
+      IHttpContextAccessor httpContextAccessor,
+      ILogger<LoginCommand> logger)
     {
       _tokenEngine = tokenEngine;
       _validator = validator;
@@ -45,9 +45,9 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
       request.LoginData = request.LoginData.Trim();
 
       _logger.LogInformation(
-          "User login request for LoginData: '{loginData}' from IP: '{requestIP}'.",
-          request.LoginData,
-          _httpContext.Connection.RemoteIpAddress);
+        "User login request for LoginData: '{loginData}' from IP: '{requestIP}'.",
+        request.LoginData,
+        _httpContext.Connection.RemoteIpAddress);
 
       _validator.ValidateAndThrowCustom(request);
 
@@ -56,7 +56,7 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
       if (userCredentials == null)
       {
         throw new NotFoundException(
-            "User was not found, please check your credentials and try again. In case this error occurred again contact DO support team by email 'spartak.ryabtsev@lanit-tercom.com'.");
+          "User was not found, please check your credentials and try again. In case this error occurred again contact DO support team by email 'spartak.ryabtsev@lanit-tercom.com'.");
       }
 
       VerifyPasswordHash(userCredentials, request.Password);
@@ -71,9 +71,9 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
       };
 
       _logger.LogInformation(
-          "User was successfully logged in with LoginData: '{loginData}' from IP: {requestIP}",
-          request.LoginData,
-          _httpContext.Connection.RemoteIpAddress);
+        "User was successfully logged in with LoginData: '{loginData}' from IP: {requestIP}",
+        request.LoginData,
+        _httpContext.Connection.RemoteIpAddress);
 
       return result;
     }
@@ -99,9 +99,9 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
       catch (Exception exc)
       {
         _logger.LogError(
-            exc,
-            "Exception was caught while receiving user credentials for LoginData: {loginData}",
-            loginData);
+          exc,
+          "Exception was caught while receiving user credentials for LoginData: {loginData}",
+          loginData);
       }
 
       return result;
@@ -110,9 +110,9 @@ namespace LT.DigitalOffice.AuthService.Business.Commands
     private void VerifyPasswordHash(IGetUserCredentialsResponse savedUserCredentials, string requestPassword)
     {
       string requestPasswordHash = PasswordHelper.GetPasswordHash(
-          savedUserCredentials.UserLogin,
-          savedUserCredentials.Salt,
-          requestPassword);
+        savedUserCredentials.UserLogin,
+        savedUserCredentials.Salt,
+        requestPassword);
 
       if (!string.Equals(savedUserCredentials.PasswordHash, requestPasswordHash))
       {

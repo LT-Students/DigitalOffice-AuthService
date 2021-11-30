@@ -8,7 +8,7 @@ using LT.DigitalOffice.AuthService.Business.Helpers;
 using LT.DigitalOffice.AuthService.Models.Dto.Requests;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.AuthService.Validation.Interfaces;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;

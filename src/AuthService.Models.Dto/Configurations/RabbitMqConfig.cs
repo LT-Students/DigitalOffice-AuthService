@@ -6,11 +6,9 @@ namespace LT.DigitalOffice.AuthService.Models.Dto.Configurations
 {
   public class RabbitMqConfig : BaseRabbitMqConfig
   {
-    public string Username { get; set; }
-    public string Password { get; set; }
-
     [AutoInjectRequest(typeof(IGetUserCredentialsRequest))]
     public string GetUserCredentialsEndpoint { get; set; }
+
     public string GetTokenEndpoint { get; set; }
   }
 }

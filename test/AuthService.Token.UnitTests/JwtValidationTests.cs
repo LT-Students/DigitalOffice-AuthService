@@ -46,8 +46,8 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
       CreateToken();
 
       Assert.Throws<ForbiddenException>(
-          () => _jwtValidation.Validate(_userJwt, TokenType.Access),
-          "Token failed validation.");
+        () => _jwtValidation.Validate(_userJwt, TokenType.Access),
+        "Token failed validation.");
     }
 
     [Test]
@@ -56,8 +56,8 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
       _userJwt = "Example_userJwt";
 
       Assert.Throws<BadRequestException>(
-          () => _jwtValidation.Validate(_userJwt, TokenType.Access),
-          "Token was wrong format.");
+        () => _jwtValidation.Validate(_userJwt, TokenType.Access),
+        "Token was wrong format.");
     }
 
     [Test]
@@ -76,19 +76,19 @@ namespace LT.DigitalOffice.AuthService.Token.UnitTests
 
       var claims = new[]
       {
-                new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString()),
-                new Claim(TokenEngine.ClaimTokenType, TokenType.Access.ToString())
-            };
+        new Claim(TokenEngine.ClaimUserId, Guid.NewGuid().ToString()),
+        new Claim(TokenEngine.ClaimTokenType, TokenType.Access.ToString())
+      };
 
       var jwt = new JwtSecurityToken(
-          issuer: "AuthService",
-          audience: _audience,
-          notBefore: DateTime.UtcNow,
-          claims: claims,
-          expires: DateTime.Now.AddMinutes(5),
-          signingCredentials: new SigningCredentials(
-              _encodingKey,
-              signingAlgorithm));
+        issuer: "AuthService",
+        audience: _audience,
+        notBefore: DateTime.UtcNow,
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(5),
+        signingCredentials: new SigningCredentials(
+          _encodingKey,
+          signingAlgorithm));
 
       _userJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
     }
