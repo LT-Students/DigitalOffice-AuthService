@@ -1,7 +1,7 @@
-﻿using LT.DigitalOffice.AuthService.Models.Dto.Requests;
+﻿using System.Threading.Tasks;
+using LT.DigitalOffice.AuthService.Models.Dto.Requests;
 using LT.DigitalOffice.AuthService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Attributes;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.AuthService.Business.Commands.Interfaces
 {

@@ -4,8 +4,8 @@ using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.AuthService.Validation.Interfaces
 {
-    [AutoInject]
-    public interface ILoginValidator : IValidator<LoginRequest>
-    {
-    }
+  [AutoInject]
+  public interface ILoginValidator : IValidator<LoginRequest>
+  {
+  }
 }
