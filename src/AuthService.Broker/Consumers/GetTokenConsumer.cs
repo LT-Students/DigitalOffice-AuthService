@@ -2,7 +2,7 @@
 using LT.DigitalOffice.AuthService.Models.Dto.Enums;
 using LT.DigitalOffice.AuthService.Token.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
-using LT.DigitalOffice.Models.Broker.Requests.Token;
+using LT.DigitalOffice.Models.Broker.Requests.Auth;
 using LT.DigitalOffice.Models.Broker.Responses.Auth;
 using MassTransit;
 
